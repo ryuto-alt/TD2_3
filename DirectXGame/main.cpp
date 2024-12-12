@@ -17,6 +17,8 @@ GameOverScene* gameOverScene = nullptr;
 GameClearScene* gameClearScene = nullptr;
 
 
+
+
 enum class Scene {
 	kUnkown = 0,
 	kTitle,
