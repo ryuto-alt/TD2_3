@@ -112,6 +112,8 @@
     <ClCompile Include="GameClear.cpp" />
     <ClCompile Include="GameOverScene.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="mapchip.cpp" />
+    <ClCompile Include="mymath.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
     <ClCompile Include="TitleScene.cpp" />
   </ItemGroup>
@@ -142,10 +144,12 @@
     <ClInclude Include="GameClear.h" />
     <ClInclude Include="GameOverScene.h" />
     <ClInclude Include="input\Input.h" />
+    <ClInclude Include="mapchip.h" />
     <ClInclude Include="math\Matrix4x4.h" />
     <ClInclude Include="math\Vector2.h" />
     <ClInclude Include="math\Vector3.h" />
     <ClInclude Include="math\Vector4.h" />
+    <ClInclude Include="mymath.h" />
     <ClInclude Include="scene\GameScene.h" />
     <ClInclude Include="TitleScene.h" />
   </ItemGroup>
