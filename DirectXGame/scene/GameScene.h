@@ -62,7 +62,11 @@ private: // メンバ変数
 	// マップチップフィールド
 	MapChipField* mapChipField_;
 	
-	Model* BlockModel = nullptr;
+	Model*NormalBlock = nullptr;
+	Model*BomBlock = nullptr;
+	Model*SlimeBlock = nullptr;
+	Model*EnemyBlock = nullptr;
+	Model*GoalBlock = nullptr;
 
 	// デバッグカメラ有効
 	bool isDebugCameraActive_ = false;

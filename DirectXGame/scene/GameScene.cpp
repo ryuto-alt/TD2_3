@@ -17,8 +17,11 @@ void GameScene::Initialize() {
 	worldTransform_.Initialize();
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
-
-	BlockModel = Model::CreateFromOBJ("cube", true);
+	NormalBlock = Model::CreateFromOBJ("cube", true);
+	BomBlock = Model::CreateFromOBJ("bomblock", true);
+	SlimeBlock = Model::CreateFromOBJ("slimeblock", true);
+	EnemyBlock = Model::CreateFromOBJ("enemyblock", true);
+	GoalBlock = Model::CreateFromOBJ("goalblock", true);
 
 	// マップチップフィールドの生成
 	mapChipField_ = new MapChipField;
@@ -108,12 +111,25 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 	// 縦横ブロック描画
-	for (std::vector<WorldTransform*> worldTransformBlockTate : worldTransformBlocks_) {
-		for (WorldTransform* worldTransformBlockYoko : worldTransformBlockTate) {
-			if (!worldTransformBlockYoko)
+
+	for (uint32_t i = 0; i < worldTransformBlocks_.size(); ++i) {
+		for (uint32_t j = 0; j < worldTransformBlocks_[i].size(); ++j) {
+			if (!worldTransformBlocks_[i][j])
 				continue;
 
-			BlockModel->Draw(*worldTransformBlockYoko, viewProjection_);
+			MapChipType chipType = mapChipField_->GetMapChipTypeByIndex(j, i);
+
+			if (chipType == MapChipType::lBlock) {
+				NormalBlock->Draw(*worldTransformBlocks_[i][j], viewProjection_);
+			} else if (chipType == MapChipType::bom) {
+				BomBlock->Draw(*worldTransformBlocks_[i][j], viewProjection_);
+			} else if (chipType == MapChipType::slime) {
+				SlimeBlock->Draw(*worldTransformBlocks_[i][j], viewProjection_);
+			} else if (chipType == MapChipType::enemy) {
+				EnemyBlock->Draw(*worldTransformBlocks_[i][j], viewProjection_);
+			} else if (chipType == MapChipType::goal) {
+				GoalBlock->Draw(*worldTransformBlocks_[i][j], viewProjection_);
+			}
 		}
 	}
 
@@ -134,26 +150,48 @@ void GameScene::Draw() {
 
 #pragma endregion
 }
-
 void GameScene::GenerateBlcoks() {
 	uint32_t numBlockVirticle = mapChipField_->GetNumBlockVirtical();
 	uint32_t numBlockHorizontal = mapChipField_->GetNumBlockHorizontal();
 
-	// 要素数を変更する
+	// ブロック配列のサイズを調整
 	worldTransformBlocks_.resize(numBlockVirticle);
-
-	// キューブの生成
 	for (uint32_t i = 0; i < numBlockVirticle; ++i) {
 		worldTransformBlocks_[i].resize(numBlockHorizontal);
 	}
 
 	for (uint32_t i = 0; i < numBlockVirticle; ++i) {
 		for (uint32_t j = 0; j < numBlockHorizontal; ++j) {
-			if (mapChipField_->GetMapChipTypeByIndex(j, i) == MapChipType::lBlock) {
+			MapChipType chipType = mapChipField_->GetMapChipTypeByIndex(j, i);
+
+			if (chipType != MapChipType::kBlank) {
 				WorldTransform* worldTransform = new WorldTransform();
 				worldTransform->Initialize();
+
+				// 位置を設定
+				worldTransform->translation_ = mapChipField_->GetMapChipPositionByIndex(j, i);
+
 				worldTransformBlocks_[i][j] = worldTransform;
-				worldTransformBlocks_[i][j]->translation_ = mapChipField_->GetMapChipPositionByIndex(j, i);
+			}
+
+			switch (chipType) {
+			case MapChipType::lBlock:
+				// ブロック1の処理
+				break;
+			case MapChipType::bom:
+				// 爆弾の処理
+				break;
+			case MapChipType::enemy:
+				// 敵の処理
+				break;
+			case MapChipType::goal:
+				// ゴールの処理
+				break;
+			case MapChipType::slime:
+				// スライムの処理
+				break;
+			default:
+				break;
 			}
 		}
 	}
