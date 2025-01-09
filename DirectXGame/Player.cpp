@@ -89,7 +89,6 @@ void Player::MovePlayer() {
 		// 移動
 		velocity_.x = -MapChipField::kBlockWidth;
 	}
-	// どちらのキーも押されていない場合
 	else {
 		// 停止
 		velocity_.x = 0;
