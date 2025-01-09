@@ -29,6 +29,8 @@ void GameScene::Initialize() {
 
 	GenerateBlcoks();
 
+
+
 	// デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
 }

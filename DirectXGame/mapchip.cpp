@@ -10,10 +10,10 @@ namespace {
 std::map<std::string, MapChipType> mapChipTable = {
     {"0", MapChipType::kBlank},
     {"1", MapChipType::lBlock},
-    {"2", MapChipType::bom},
-    {"3", MapChipType::enemy},
-    {"4", MapChipType::goal},
-    {"5", MapChipType::slime},
+    {"2", MapChipType::bom   },
+    {"3", MapChipType::enemy },
+    {"4", MapChipType::goal  },
+    {"5", MapChipType::slime },
 };
 
 }
@@ -92,7 +92,14 @@ MapChipType MapChipField::GetMapChipTypeByIndex(uint32_t xIndex, uint32_t yIndex
 	return mapChipData_.data[yIndex][xIndex];
 }
 
-Vector3 MapChipField::GetMapChipPositionByIndex(uint32_t xIndex, uint32_t yIndex) { return Vector3(kBlockWidth * xIndex, kBlockHeight * (kNumBlockVirtical - 1 - yIndex), 0); }
+Vector3 MapChipField::GetMapChipPositionByIndex(uint32_t xIndex, uint32_t yIndex) {
+	// X軸とY軸のオフセットを計算
+	float xOffset = kBlockWidth * kNumBlockHorizontal / 12.0f;
+	float yOffset = kBlockHeight * kNumBlockVirtical / 1.5f;
+
+	// 座標計算にオフセットを適用
+	return Vector3(kBlockWidth * xIndex - xOffset, kBlockHeight * (kNumBlockVirtical - 1 - yIndex) - yOffset, 0);
+}
 
 uint32_t MapChipField::GetNumBlockVirtical() const { return kNumBlockVirtical; }
 
