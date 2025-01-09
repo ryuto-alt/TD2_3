@@ -49,7 +49,7 @@ public:
 
 	MapChipType GetMapChipTypeByIndex(uint32_t xIndex, uint32_t yIndex);
 
-	Vector3 GetMapChipPositionByIndex(uint32_t xIndex, uint32_t yIndex);
+	Vector3 GetMapChipPositionByIndex(int32_t xIndex, int32_t yIndex);
 
 	uint32_t GetNumBlockVirtical() const;
 	uint32_t GetNumBlockHorizontal() const;

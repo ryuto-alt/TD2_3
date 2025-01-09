@@ -6,9 +6,8 @@
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
-
-		delete player;
-		delete player2;
+	delete player;
+	delete player2;
 }
 
 void GameScene::Initialize() {
@@ -35,11 +34,16 @@ void GameScene::Initialize() {
 
 	modelPlayer_ = Model::CreateFromOBJ("cube", true);
 
-	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(8, 5);
-	Vector3 playerPosition2 = mapChipField_->GetMapChipPositionByIndex(8, 10);
+	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(8, 12);
+	Vector3 playerPosition2 = mapChipField_->GetMapChipPositionByIndex(8, -1);
+	player = new Player();
+	player2 = new Player();
 	player->Initialize(modelPlayer_, &viewProjection_, playerPosition);
 	player2->Initialize(modelPlayer_, &viewProjection_, playerPosition2);
 
+		// Camera
+	Camera_ = new Camera();
+	Camera_->Initialize(railcameraPos, railcameraRad);
 
 	// デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
@@ -47,11 +51,8 @@ void GameScene::Initialize() {
 
 void GameScene::Update() {
 
-		player->Update();
-	
-
-		player2->Update();
-	
+	player->Update();
+	player2->Update();
 
 	if (Input::GetInstance()->PushKey(DIK_2)) {
 		finished_ = true;
@@ -72,36 +73,14 @@ void GameScene::Update() {
 			worldTransformBlockYoko->TransferMatrix();
 		}
 	}
-#pragma endregion
 
-#pragma region デバッグカメラ
-	// カメラ処理
-	if (isDebugCameraActive_) {
-		// デバッグカメラの更新
-		debugCamera_->Update();
-		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
-		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
-		// ビュープロジェクション行列の転送
-		viewProjection_.TransferMatrix();
-	} else {
-		// ビュープロジェクション行列の更新と転送
-		/*viewProjection_.matView = cameraController_->GetViewProjection().matView;
-		viewProjection_.matProjection = cameraController_->GetViewProjection().matProjection;*/
-		// ビュープロジェクションの転送
-		viewProjection_.TransferMatrix();
-	}
+	Camera_->Update();
+	viewProjection_.matView = Camera_->GetViewProjection().matView;
+	viewProjection_.matProjection = Camera_->GetViewProjection().matProjection;
+	viewProjection_.TransferMatrix();
 
-#ifdef _DEBUG
-	if (input_->TriggerKey(DIK_SPACE)) {
-		if (isDebugCameraActive_ == true)
-			isDebugCameraActive_ = false;
-		else
-			isDebugCameraActive_ = true;
-	}
-#endif
-
-#pragma endregion
 }
+
 
 void GameScene::Draw() {
 
@@ -131,10 +110,8 @@ void GameScene::Draw() {
 	/// </summary>
 	// 縦横ブロック描画
 
-		player->Draw();
-
-		player2->Draw();
-
+	player->Draw();
+	player2->Draw();
 
 	for (uint32_t i = 0; i < worldTransformBlocks_.size(); ++i) {
 		for (uint32_t j = 0; j < worldTransformBlocks_[i].size(); ++j) {
@@ -174,6 +151,7 @@ void GameScene::Draw() {
 
 #pragma endregion
 }
+
 void GameScene::GenerateBlcoks() {
 	uint32_t numBlockVirticle = mapChipField_->GetNumBlockVirtical();
 	uint32_t numBlockHorizontal = mapChipField_->GetNumBlockHorizontal();
