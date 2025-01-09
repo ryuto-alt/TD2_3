@@ -33,9 +33,9 @@ void GameScene::Initialize() {
 	// 自キャラの生成
 	player_ = new Player;
 	modelPlayer_ = Model::CreateFromOBJ("cube", true);
-
-	// プレイヤーの初期位置の取得
 	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(8, 12);
+	player_->Initialize(modelPlayer_, &viewProjection_, playerPosition);
+	// プレイヤーの初期位置の取得
 	player_->SetMapChipField(mapChipField_);
 
 
