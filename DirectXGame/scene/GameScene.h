@@ -12,6 +12,9 @@
 #include "WorldTransform.h"
 #include "mapchip.h"
 #include <Camera.h>
+#include <imgui.h>
+#include "ImGuiManager.h"
+
 
 /// <summary>
 /// ゲームシーン

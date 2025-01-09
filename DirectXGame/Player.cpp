@@ -79,16 +79,18 @@ void Player::OnCollision(const Enemy* enemy) {
 }
 
 void Player::MovePlayer() {
+
 	// 右移動操作
-	if (Input::GetInstance()->TriggerKey(DIK_RIGHT)) {
+	if (Input::GetInstance()->TriggerKey(DIK_RIGHT) && worldTransform_.translation_.x < -72) {
 		// 移動
 		velocity_.x = MapChipField::kBlockWidth;
 	}
 	// 左移動操作
-	else if (Input::GetInstance()->TriggerKey(DIK_LEFT)) {
+	else if (Input::GetInstance()->TriggerKey(DIK_LEFT) && worldTransform_.translation_.x > -97) {
 		// 移動
 		velocity_.x = -MapChipField::kBlockWidth;
 	}
+	// どちらのキーも押されていない場合
 	else {
 		// 停止
 		velocity_.x = 0;
