@@ -11,6 +11,8 @@
 #include "WorldTransform.h"
 #include "DebugCamera.h"
 #include"mapchip.h"
+#include "Player.h"
+#include "AABB.h"
 
 /// <summary>
 /// ゲームシーン
@@ -75,4 +77,8 @@ private: // メンバ変数
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
+	
+	Player* player_ = nullptr;
+	Model* modelPlayer_ = nullptr;
+	
 };

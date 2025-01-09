@@ -30,12 +30,23 @@ void GameScene::Initialize() {
 	GenerateBlcoks();
 
 
+	// 自キャラの生成
+	player_ = new Player;
+	modelPlayer_ = Model::CreateFromOBJ("cube", true);
+
+	// プレイヤーの初期位置の取得
+	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(8, 12);
+	player_->SetMapChipField(mapChipField_);
+
 
 	// デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
 }
 
 void GameScene::Update() {
+
+	player_->Update();
+
 	if (Input::GetInstance()->PushKey(DIK_2)) {
 		finished_ = true;
 	}
@@ -113,6 +124,8 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 	// 縦横ブロック描画
+
+	player_->Draw();
 
 	for (uint32_t i = 0; i < worldTransformBlocks_.size(); ++i) {
 		for (uint32_t j = 0; j < worldTransformBlocks_[i].size(); ++j) {
