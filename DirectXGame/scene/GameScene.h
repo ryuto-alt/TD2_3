@@ -78,7 +78,9 @@ private: // メンバ変数
 	/// ゲームシーン用
 	/// </summary>
 	
-	Player* player_ = nullptr;
 	Model* modelPlayer_ = nullptr;
+	std::list<Player*> players_;
+	Player* player = new Player();
+	Player* player2 = new Player();
 	
 };

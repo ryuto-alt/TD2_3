@@ -5,7 +5,11 @@
 
 GameScene::GameScene() {}
 
-GameScene::~GameScene() {}
+GameScene::~GameScene() {
+
+		delete player;
+		delete player2;
+}
 
 void GameScene::Initialize() {
 
@@ -29,14 +33,12 @@ void GameScene::Initialize() {
 
 	GenerateBlcoks();
 
-
-	// 自キャラの生成
-	player_ = new Player;
 	modelPlayer_ = Model::CreateFromOBJ("cube", true);
-	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(8, 12);
-	player_->Initialize(modelPlayer_, &viewProjection_, playerPosition);
-	// プレイヤーの初期位置の取得
-	player_->SetMapChipField(mapChipField_);
+
+	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(8, 5);
+	Vector3 playerPosition2 = mapChipField_->GetMapChipPositionByIndex(8, 10);
+	player->Initialize(modelPlayer_, &viewProjection_, playerPosition);
+	player2->Initialize(modelPlayer_, &viewProjection_, playerPosition2);
 
 
 	// デバッグカメラの生成
@@ -45,7 +47,11 @@ void GameScene::Initialize() {
 
 void GameScene::Update() {
 
-	player_->Update();
+		player->Update();
+	
+
+		player2->Update();
+	
 
 	if (Input::GetInstance()->PushKey(DIK_2)) {
 		finished_ = true;
@@ -125,7 +131,10 @@ void GameScene::Draw() {
 	/// </summary>
 	// 縦横ブロック描画
 
-	player_->Draw();
+		player->Draw();
+
+		player2->Draw();
+
 
 	for (uint32_t i = 0; i < worldTransformBlocks_.size(); ++i) {
 		for (uint32_t j = 0; j < worldTransformBlocks_[i].size(); ++j) {

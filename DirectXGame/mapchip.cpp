@@ -94,8 +94,8 @@ MapChipType MapChipField::GetMapChipTypeByIndex(uint32_t xIndex, uint32_t yIndex
 
 Vector3 MapChipField::GetMapChipPositionByIndex(uint32_t xIndex, uint32_t yIndex) {
 	// X軸とY軸のオフセットを計算
-	float xOffset = kBlockWidth * kNumBlockHorizontal / 12.0f;
-	float yOffset = kBlockHeight * kNumBlockVirtical / 1.5f;
+	float xOffset = kBlockWidth * kNumBlockHorizontal / 2.0f;
+	float yOffset = kBlockHeight * kNumBlockVirtical / 2.0f;
 
 	// 座標計算にオフセットを適用
 	return Vector3(kBlockWidth * xIndex - xOffset, kBlockHeight * (kNumBlockVirtical - 1 - yIndex) - yOffset, 0);
