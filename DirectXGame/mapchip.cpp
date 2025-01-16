@@ -21,7 +21,7 @@ std::map<std::string, MapChipType> mapChipTable = {
 MapChipField::IndexSet MapChipField::GetMapChipIndexSetByPosition(const Vector3& position) {
 	IndexSet indexSet = {};
 	indexSet.xIndex = static_cast<uint32_t>((position.x + kBlockWidth / 2) / kBlockWidth);
-	indexSet.yIndex = kNumBlockVirtical - 1 - static_cast<uint32_t>(position.y + kBlockHeight / 2 / kBlockHeight);
+	indexSet.yIndex = kNumBlockVirtical - 1 - static_cast<uint32_t>((position.y + kBlockHeight / 2) / kBlockHeight);
 	return indexSet;
 }
 
@@ -92,17 +92,4 @@ MapChipType MapChipField::GetMapChipTypeByIndex(uint32_t xIndex, uint32_t yIndex
 	return mapChipData_.data[yIndex][xIndex];
 }
 
-Vector3 MapChipField::GetMapChipPositionByIndex(int32_t xIndex, int32_t yIndex) {
-	// X軸とY軸のオフセットを計算
-	float xOffset = kBlockWidth * kNumBlockHorizontal * 0 ;
-	float yOffset = kBlockHeight * kNumBlockVirtical * 0 ;
-
-	// 座標計算にオフセットを適用
-	return Vector3(kBlockWidth * xIndex - xOffset, kBlockHeight * (kNumBlockVirtical - 1 - yIndex) - yOffset, 0);
-}
-
-
-
-uint32_t MapChipField::GetNumBlockVirtical() const { return kNumBlockVirtical; }
-
-uint32_t MapChipField::GetNumBlockHorizontal() const { return kNumBlockHorizontal; }
+Vector3 MapChipField::GetMapChipPositionByIndex(uint32_t xIndex, uint32_t yIndex) { return Vector3(kBlockWidth * xIndex, kBlockHeight * (kNumBlockVirtical - 1 - yIndex), 0); }

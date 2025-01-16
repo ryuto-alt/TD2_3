@@ -90,13 +90,8 @@ private: // メンバ変数
 
 	Camera* Camera_ = nullptr;
 
-	Vector3 railcameraPos = {-85, 7, -200};
+	Vector3 railcameraPos = {15.5f, 27.5f, -40.0f};
 	Vector3 railcameraRad = {0, 0, 0};
-
-	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(8, 12);
-	Vector3 playerPosition2 = mapChipField_->GetMapChipPositionByIndex(8, -1);
-	Vector3 playerPosition3 = mapChipField_->GetMapChipPositionByIndex(-1, 5);
-	Vector3 playerPosition4 = mapChipField_->GetMapChipPositionByIndex(16, 5);
 
 	// SkyDome
 	Skydome* skydome_ = nullptr;

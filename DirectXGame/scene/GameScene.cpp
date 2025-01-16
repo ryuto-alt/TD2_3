@@ -11,6 +11,13 @@ GameScene::~GameScene() {
 	delete player3;
 	delete player4;
 	delete skydome_;
+
+		for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
+		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
+			delete worldTransformBlock;
+		}
+	}
+	worldTransformBlocks_.clear();
 }
 
 void GameScene::Initialize() {
@@ -47,6 +54,10 @@ void GameScene::Initialize() {
 
 	player = new Player();
 	player2 = new Player();
+	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(8, 12);
+	Vector3 playerPosition2 = mapChipField_->GetMapChipPositionByIndex(8, 1);
+	Vector3 playerPosition3 = mapChipField_->GetMapChipPositionByIndex(1, 5);
+	Vector3 playerPosition4 = mapChipField_->GetMapChipPositionByIndex(16, 5);
 	player->Initialize(modelPlayer_, &viewProjection_, playerPosition);
 	player2->Initialize(modelPlayer_, &viewProjection_, playerPosition2);
 	player3->Initialize(modelPlayer_, &viewProjection_, playerPosition3);
@@ -93,8 +104,8 @@ void GameScene::Update() {
 	viewProjection_.TransferMatrix();
 
 	ImGui::Begin("Scene");
-	ImGui::Text("playerPos3: %f",playerPosition3.y ); // シーン名を表示
-	ImGui::Text("playerPos4: %f",playerPosition4.y ); // シーン名を表示
+	//ImGui::Text("playerPos3: %f",playerPosition3.y ); // シーン名を表示
+	//ImGui::Text("playerPos4: %f",playerPosition4.y ); // シーン名を表示
 	ImGui::End();
 
 }

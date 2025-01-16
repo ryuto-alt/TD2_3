@@ -46,13 +46,13 @@ public:
 	MapChipData mapChipData_;
 
 	void LoadMapChipCsv(const std::string& filePath);
-
 	MapChipType GetMapChipTypeByIndex(uint32_t xIndex, uint32_t yIndex);
 
-	Vector3 GetMapChipPositionByIndex(int32_t xIndex, int32_t yIndex);
+	Vector3 GetMapChipPositionByIndex(uint32_t xIndex, uint32_t yIndex);
 
-	uint32_t GetNumBlockVirtical() const;
-	uint32_t GetNumBlockHorizontal() const;
+    uint32_t GetNumBlockVirtical() const { return kNumBlockVirtical; }
+
+	uint32_t GetNumBlockHorizontal() const { return kNumBlockHorizontal; }
 
 	IndexSet GetMapChipIndexSetByPosition(const Vector3& position);
 

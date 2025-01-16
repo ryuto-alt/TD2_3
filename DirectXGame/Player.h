@@ -45,10 +45,10 @@ public:
 	void SnapToBlockY();
 
 	void CheckMapCollision(CollisionMapInfo& info);
-	void CheckMapCollisionUp(CollisionMapInfo& info);
-	void CheckMapCollisionDown(CollisionMapInfo& info);
-	void CheckMapCollisionLeft(CollisionMapInfo& info);
-	void CheckMapCollisionRight(CollisionMapInfo& info);
+	void CheckMapCollisionUp(CollisionMapInfo& info,bool& hit);
+	void CheckMapCollisionDown(CollisionMapInfo& info,bool& hit);
+	void CheckMapCollisionLeft(CollisionMapInfo& info,bool& hit);
+	void CheckMapCollisionRight(CollisionMapInfo& info, bool& hit);
 
 	void JudgmentMove(const CollisionMapInfo& info);
 
