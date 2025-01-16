@@ -1,11 +1,11 @@
-#include "GameScene.h"
+#include "GameScene8.h"
 #include "TextureManager.h"
 #include "mymath.h"
 #include <cassert>
 
-GameScene::GameScene() {}
+GameScene8::GameScene8() {}
 
-GameScene::~GameScene() {
+GameScene8::~GameScene8() {
 	delete player;
 	delete player2;
 	delete player3;
@@ -13,15 +13,12 @@ GameScene::~GameScene() {
 	delete skydome_;
 }
 
-void GameScene::Initialize() {
-
+void GameScene8::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
-	// ワールドトランスフォームの初期化
 	worldTransform_.Initialize();
-	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 	NormalBlock = Model::CreateFromOBJ("cube", true);
 	BomBlock = Model::CreateFromOBJ("bomblock", true);
@@ -29,7 +26,6 @@ void GameScene::Initialize() {
 	EnemyBlock = Model::CreateFromOBJ("enemyblock", true);
 	GoalBlock = Model::CreateFromOBJ("goalblock", true);
 
-	// マップチップフィールドの生成
 	mapChipField_ = new MapChipField;
 	mapChipField_->LoadMapChipCsv("Resources/map.csv");
 
@@ -37,13 +33,9 @@ void GameScene::Initialize() {
 
 	modelPlayer_ = Model::CreateFromOBJ("cube", true);
 
-
-	// SkyDome
 	skydome_ = new Skydome();
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 	skydome_->Initialize(modelSkydome_, &viewProjection_);
-
-
 
 	player = new Player();
 	player2 = new Player();
@@ -52,16 +44,13 @@ void GameScene::Initialize() {
 	player3->Initialize(modelPlayer_, &viewProjection_, playerPosition3);
 	player4->Initialize(modelPlayer_, &viewProjection_, playerPosition4);
 
-		// Camera
 	Camera_ = new Camera();
 	Camera_->Initialize(railcameraPos, railcameraRad);
 
-	// デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
 }
 
-void GameScene::Update() {
-
+void GameScene8::Update() {
 	player->Update();
 	player2->Update();
 	player3->Update2();
@@ -71,18 +60,12 @@ void GameScene::Update() {
 		finished_ = true;
 	}
 
-#pragma region ブロック描画
-	// 縦横ブロック更新
 	for (std::vector<WorldTransform*> worldTransformBlockTate : worldTransformBlocks_) {
 		for (WorldTransform* worldTransformBlockYoko : worldTransformBlockTate) {
 			if (!worldTransformBlockYoko)
 				continue;
 
-			// アフィン変換行列の作成
-			//(MakeAffineMatrix：自分で作った数学系関数)
 			worldTransformBlockYoko->matWorld_ = MakeAffineMatrix(worldTransformBlockYoko->scale_, worldTransformBlockYoko->rotation_, worldTransformBlockYoko->translation_);
-
-			// 定数バッファに転送
 			worldTransformBlockYoko->TransferMatrix();
 		}
 	}
@@ -93,40 +76,19 @@ void GameScene::Update() {
 	viewProjection_.TransferMatrix();
 
 	ImGui::Begin("Scene");
-	ImGui::Text("playerPos3: %f",playerPosition3.y ); // シーン名を表示
-	ImGui::Text("playerPos4: %f",playerPosition4.y ); // シーン名を表示
+	ImGui::Text("playerPos3: %f", playerPosition3.y);
+	ImGui::Text("playerPos4: %f", playerPosition4.y);
 	ImGui::End();
-
 }
 
-
-void GameScene::Draw() {
-
-	// コマンドリストの取得
+void GameScene8::Draw() {
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
-#pragma region 背景スプライト描画
-	// 背景スプライト描画前処理
 	Sprite::PreDraw(commandList);
-
-	/// <summary>
-	/// ここに背景スプライトの描画処理を追加できる
-	/// </summary>
-
-	// スプライト描画後処理
 	Sprite::PostDraw();
-	// 深度バッファクリア
 	dxCommon_->ClearDepthBuffer();
-#pragma endregion
 
-#pragma region 3Dオブジェクト描画
-	// 3Dオブジェクト描画前処理
 	Model::PreDraw(commandList);
-
-	/// <summary>
-	/// ここに3Dオブジェクトの描画処理を追加できる
-	/// </summary>
-	// 縦横ブロック描画
 
 	player->Draw();
 	player2->Draw();
@@ -156,30 +118,16 @@ void GameScene::Draw() {
 
 	skydome_->Draw();
 
-	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
-#pragma endregion
 
-#pragma region 前景スプライト描画
-	// 前景スプライト描画前処理
 	Sprite::PreDraw(commandList);
-
-	/// <summary>
-	/// ここに前景スプライトの描画処理を追加できる
-	/// </summary>
-
-	// スプライト描画後処理
 	Sprite::PostDraw();
-
-#pragma endregion
-
 }
 
-void GameScene::GenerateBlcoks() {
+void GameScene8::GenerateBlcoks() {
 	uint32_t numBlockVirticle = mapChipField_->GetNumBlockVirtical();
 	uint32_t numBlockHorizontal = mapChipField_->GetNumBlockHorizontal();
 
-	// ブロック配列のサイズを調整
 	worldTransformBlocks_.resize(numBlockVirticle);
 	for (uint32_t i = 0; i < numBlockVirticle; ++i) {
 		worldTransformBlocks_[i].resize(numBlockHorizontal);
@@ -192,28 +140,20 @@ void GameScene::GenerateBlcoks() {
 			if (chipType != MapChipType::kBlank) {
 				WorldTransform* worldTransform = new WorldTransform();
 				worldTransform->Initialize();
-
-				// 位置を設定
 				worldTransform->translation_ = mapChipField_->GetMapChipPositionByIndex(j, i);
-
 				worldTransformBlocks_[i][j] = worldTransform;
 			}
 
 			switch (chipType) {
 			case MapChipType::lBlock:
-				// ブロック1の処理
 				break;
 			case MapChipType::bom:
-				// 爆弾の処理
 				break;
 			case MapChipType::enemy:
-				// 敵の処理
 				break;
 			case MapChipType::goal:
-				// ゴールの処理
 				break;
 			case MapChipType::slime:
-				// スライムの処理
 				break;
 			default:
 				break;

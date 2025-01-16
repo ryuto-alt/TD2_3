@@ -1,10 +1,19 @@
 #include "Audio.h"
 #include "AxisIndicator.h"
 #include "DirectXCommon.h"
-#include "TitleScene.h"
-#include "GameScene.h"
-#include "GameOverScene.h"
 #include "GameClear.h"
+#include "GameOverScene.h"
+#include "GameScene.h"
+#include "GameScene10.h"
+#include "GameScene2.h"
+#include "GameScene3.h"
+#include "GameScene4.h"
+#include "GameScene5.h"
+#include "GameScene6.h"
+#include "GameScene7.h"
+#include "GameScene8.h"
+#include "GameScene9.h"
+#include "TitleScene.h"
 
 #include "ImGuiManager.h"
 #include "PrimitiveDrawer.h"
@@ -15,18 +24,17 @@ GameScene* gameScene = nullptr;
 TitleScene* titleScene = nullptr;
 GameOverScene* gameOverScene = nullptr;
 GameClearScene* gameClearScene = nullptr;
+GameScene2* gameScene2 = nullptr;
+GameScene3* gameScene3 = nullptr;
+GameScene4* gameScene4 = nullptr;
+GameScene5* gameScene5 = nullptr;
+GameScene6* gameScene6 = nullptr;
+GameScene7* gameScene7 = nullptr;
+GameScene8* gameScene8 = nullptr;
+GameScene9* gameScene9 = nullptr;
+GameScene10* gameScene10 = nullptr;
 
 
-
-
-enum class Scene {
-	kUnkown = 0,
-	kTitle,
-	kGame,
-	kGameOver,
-	kGameClear
-
-};
 // 現在シーン
 Scene scene = Scene::kUnkown;
 
@@ -36,6 +44,24 @@ const char* GetSceneName(Scene scenes) {
 		return "Title";
 	case Scene::kGame:
 		return "Game";
+	case Scene::kGame2:
+		return "Game2";
+	case Scene::kGame3:
+		return "Game3";
+	case Scene::kGame4:
+		return "Game4";
+	case Scene::kGame5:
+		return "Game5";
+	case Scene::kGame6:
+		return "Game6";
+	case Scene::kGame7:
+		return "Game7";
+	case Scene::kGame8:
+		return "Game8";
+	case Scene::kGame9:
+		return "Game9";
+	case Scene::kGame10:
+		return "Game10";
 	case Scene::kGameOver:
 		return "Game Over";
 	case Scene::kGameClear:
@@ -45,53 +71,121 @@ const char* GetSceneName(Scene scenes) {
 	}
 }
 
-
 void ChangeScene() {
 	switch (scene) {
 	case Scene::kTitle:
 		if (titleScene->IsFinished()) {
-			// シーン変更
 			scene = Scene::kGame;
-			// 旧シーンの解放
 			delete titleScene;
 			titleScene = nullptr;
-			// 新シーンの生成と初期化
 			gameScene = new GameScene;
 			gameScene->Initialize();
 		}
 		break;
 	case Scene::kGame:
 		if (gameScene->IsFinished()) {
-			// シーン変更
-			scene = Scene::kGameOver;
-			// 旧シーンの解放
+			scene = Scene::kGame2;
 			delete gameScene;
 			gameScene = nullptr;
-			// 新シーンの生成と初期化
+			gameScene2 = new GameScene2;
+			gameScene2->Initialize();
+		}
+		break;
+	case Scene::kGame2:
+		if (gameScene2->IsFinished()) {
+			scene = Scene::kGame3;
+			delete gameScene2;
+			gameScene2 = nullptr;
+			gameScene3 = new GameScene3;
+			gameScene3->Initialize();
+		}
+		break;
+	case Scene::kGame3:
+		if (gameScene3->IsFinished()) {
+			scene = Scene::kGame4;
+			delete gameScene3;
+			gameScene3 = nullptr;
+			gameScene4 = new GameScene4;
+			gameScene4->Initialize();
+		}
+		break;
+	case Scene::kGame4:
+		if (gameScene4->IsFinished()) {
+			scene = Scene::kGame5;
+			delete gameScene4;
+			gameScene4 = nullptr;
+			gameScene5 = new GameScene5;
+			gameScene5->Initialize();
+		}
+		break;
+	case Scene::kGame5:
+		if (gameScene5->IsFinished()) {
+			scene = Scene::kGame6;
+			delete gameScene5;
+			gameScene5 = nullptr;
+			gameScene6 = new GameScene6;
+			gameScene6->Initialize();
+		}
+		break;
+	case Scene::kGame6:
+		if (gameScene6->IsFinished()) {
+			scene = Scene::kGame7;
+			delete gameScene6;
+			gameScene6 = nullptr;
+			gameScene7 = new GameScene7;
+			gameScene7->Initialize();
+		}
+		break;
+	case Scene::kGame7:
+		if (gameScene7->IsFinished()) {
+			scene = Scene::kGame8;
+			delete gameScene7;
+			gameScene7 = nullptr;
+			gameScene8 = new GameScene8;
+			gameScene8->Initialize();
+		}
+		break;
+	case Scene::kGame8:
+		if (gameScene8->IsFinished()) {
+			scene = Scene::kGame9;
+			delete gameScene8;
+			gameScene8 = nullptr;
+			gameScene9 = new GameScene9;
+			gameScene9->Initialize();
+		}
+		break;
+	case Scene::kGame9:
+		if (gameScene9->IsFinished()) {
+			scene = Scene::kGame10;
+			delete gameScene9;
+			gameScene9 = nullptr;
+			gameScene10 = new GameScene10;
+			gameScene10->Initialize();
+		}
+		break;
+	case Scene::kGame10:
+		if (gameScene10->IsFinished()) {
+			scene = Scene::kGameOver;
+			delete gameScene10;
+			gameScene10 = nullptr;
 			gameOverScene = new GameOverScene;
 			gameOverScene->Initialize();
 		}
 		break;
 	case Scene::kGameOver:
 		if (gameOverScene->IsFinished()) {
-			// シーン変更
 			scene = Scene::kGameClear;
-			// 旧シーンの解放
 			delete gameOverScene;
 			gameOverScene = nullptr;
-			// 新シーンの生成と初期化
 			gameClearScene = new GameClearScene;
 			gameClearScene->Initialize();
 		}
 		break;
 	case Scene::kGameClear:
 		if (gameClearScene->IsFinished()) {
-			// シーン変更
 			scene = Scene::kTitle;
-			// 旧シーンの解放
 			delete gameClearScene;
 			gameClearScene = nullptr;
-			// 新シーンの生成と初期化
 			titleScene = new TitleScene;
 			titleScene->Initialize();
 		}
@@ -106,6 +200,33 @@ void UpdateScene() {
 		break;
 	case Scene::kGame:
 		gameScene->Update();
+		break;
+	case Scene::kGame2:
+		gameScene2->Update();
+		break;
+	case Scene::kGame3:
+		gameScene3->Update();
+		break;
+	case Scene::kGame4:
+		gameScene4->Update();
+		break;
+	case Scene::kGame5:
+		gameScene5->Update();
+		break;
+	case Scene::kGame6:
+		gameScene6->Update();
+		break;
+	case Scene::kGame7:
+		gameScene7->Update();
+		break;
+	case Scene::kGame8:
+		gameScene8->Update();
+		break;
+	case Scene::kGame9:
+		gameScene9->Update();
+		break;
+	case Scene::kGame10:
+		gameScene10->Update();
 		break;
 	case Scene::kGameOver:
 		gameOverScene->Update();
@@ -124,6 +245,33 @@ void DrawScene() {
 	case Scene::kGame:
 		gameScene->Draw();
 		break;
+	case Scene::kGame2:
+		gameScene2->Draw();
+		break;
+	case Scene::kGame3:
+		gameScene3->Draw();
+		break;
+	case Scene::kGame4:
+		gameScene4->Draw();
+		break;
+	case Scene::kGame5:
+		gameScene5->Draw();
+		break;
+	case Scene::kGame6:
+		gameScene6->Draw();
+		break;
+	case Scene::kGame7:
+		gameScene7->Draw();
+		break;
+	case Scene::kGame8:
+		gameScene8->Draw();
+		break;
+	case Scene::kGame9:
+		gameScene9->Draw();
+		break;
+	case Scene::kGame10:
+		gameScene10->Draw();
+		break;
 	case Scene::kGameOver:
 		gameOverScene->Draw();
 		break;
@@ -137,7 +285,6 @@ void DrawScene() {
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	WinApp* win = nullptr;
 	DirectXCommon* dxCommon = nullptr;
-	// 汎用機能
 	Input* input = nullptr;
 	Audio* audio = nullptr;
 	AxisIndicator* axisIndicator = nullptr;
@@ -152,29 +299,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	dxCommon->Initialize(win);
 
 #pragma region 汎用機能初期化
-	// ImGuiの初期化
 	ImGuiManager* imguiManager = ImGuiManager::GetInstance();
 	imguiManager->Initialize(win, dxCommon);
 
-	// 入力の初期化
 	input = Input::GetInstance();
 	input->Initialize();
 
-	// オーディオの初期化
 	audio = Audio::GetInstance();
 	audio->Initialize();
 
-	// テクスチャマネージャの初期化
 	TextureManager::GetInstance()->Initialize(dxCommon->GetDevice());
 	TextureManager::Load("white1x1.png");
 
-	// スプライト静的初期化
 	Sprite::StaticInitialize(dxCommon->GetDevice(), WinApp::kWindowWidth, WinApp::kWindowHeight);
-
-	// 3Dモデル静的初期化
 	Model::StaticInitialize();
 
-	// 軸方向表示初期化
 	axisIndicator = AxisIndicator::GetInstance();
 	axisIndicator->Initialize();
 
@@ -185,71 +324,52 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// タイトルシーン初期化
 	titleScene = new TitleScene;
 	titleScene->Initialize();
-	// ゲームシーンの初期化
-	gameScene = new GameScene();
-	gameScene->Initialize();
-	scene = Scene::kGameOver;
-	//ゲームオーバーシーン初期化
-	gameOverScene = new GameOverScene();
-	gameOverScene->Initialize();
-	scene = Scene::kGameClear;
-	//ゲームクリアシーン初期化
-	gameClearScene = new GameClearScene();
-	gameClearScene->Initialize();
 	scene = Scene::kTitle;
 
 	// メインループ
 	while (true) {
-		// メッセージ処理
 		if (win->ProcessMessage()) {
 			break;
 		}
 
-		// ImGui受付開始
 		imguiManager->Begin();
-		// 入力関連の毎フレーム処理
 		input->Update();
-		//シーン
 		ChangeScene();
 		UpdateScene();
 
-		
-		//imGui
 		ImGui::Begin("Scene");
-		ImGui::Text("Scene: %s", GetSceneName(scene)); // シーン名を表示
+		ImGui::Text("Scene: %s", GetSceneName(scene));
 		ImGui::End();
-		// 軸表示の更新
+
 		axisIndicator->Update();
-		// ImGui受付終了
 		imguiManager->End();
-		// 描画開始
+
 		dxCommon->PreDraw();
-
 		DrawScene();
-
-		// 軸表示の描画
 		axisIndicator->Draw();
-		// プリミティブ描画のリセット
 		primitiveDrawer->Reset();
-		// ImGui描画
 		imguiManager->Draw();
-		// 描画終了
 		dxCommon->PostDraw();
 	}
 
 	// 各種解放
 	delete titleScene;
 	delete gameScene;
+	delete gameScene2;
+	delete gameScene3;
+	delete gameScene4;
+	delete gameScene5;
+	delete gameScene6;
+	delete gameScene7;
+	delete gameScene8;
+	delete gameScene9;
+	delete gameScene10;
 	delete gameOverScene;
 	delete gameClearScene;
 
-	// 3Dモデル解放
 	Model::StaticFinalize();
 	audio->Finalize();
-	// ImGui解放
 	imguiManager->Finalize();
-
-	// ゲームウィンドウの破棄
 	win->TerminateGameWindow();
 
 	return 0;
