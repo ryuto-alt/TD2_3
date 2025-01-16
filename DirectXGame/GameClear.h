@@ -46,6 +46,12 @@ private: // メンバ変数
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
 
+	// BGM
+	int BGMHandle_ = 0;
+	int BGMAudio_ = -1;
+	// BGMが再生されているかを追跡
+	bool isBGMPlaying_ = false;
+
 	// 終了フラグ
 	bool finished_ = false;
 

@@ -43,7 +43,7 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
-	void GenerateBlcoks();
+	void GenerateBlocks();
 
 	bool IsFinished() const { return finished_; }
 
@@ -53,6 +53,12 @@ private: // メンバ変数
 	Audio* audio_ = nullptr;
 	ViewProjection viewProjection_;
 	WorldTransform worldTransform_;
+
+	// BGM
+	int BGMHandle_ = 0;
+	int BGMAudio_ = -1;
+	// BGMが再生されているかを追跡
+	bool isBGMPlaying_ = false;
 
 	//終了フラグ
 	bool finished_ = false;

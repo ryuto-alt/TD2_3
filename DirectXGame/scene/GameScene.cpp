@@ -11,7 +11,9 @@ void GameScene::Initialize() {
 
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
+
 	audio_ = Audio::GetInstance();
+	BGMHandle_ = audio_->LoadWave("mokugyo.wav");
 
 	// ワールドトランスフォームの初期化
 	worldTransform_.Initialize();
@@ -27,15 +29,23 @@ void GameScene::Initialize() {
 	mapChipField_ = new MapChipField;
 	mapChipField_->LoadMapChipCsv("Resources/map.csv");
 
-	GenerateBlcoks();
+	GenerateBlocks();
 
 	// デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
 }
 
 void GameScene::Update() {
+
+	// BGMが再生されていない場合のみ再生する
+	if (!isBGMPlaying_) {
+		audio_->PlayAudio(BGMAudio_, BGMHandle_, true, 0.3f);
+		isBGMPlaying_ = true; // フラグを立てる
+	}
+
 	if (Input::GetInstance()->PushKey(DIK_2)) {
 		finished_ = true;
+		audio_->StopAudio(BGMAudio_);
 	}
 
 #pragma region ブロック描画
@@ -150,7 +160,7 @@ void GameScene::Draw() {
 
 #pragma endregion
 }
-void GameScene::GenerateBlcoks() {
+void GameScene::GenerateBlocks() {
 	uint32_t numBlockVirticle = mapChipField_->GetNumBlockVirtical();
 	uint32_t numBlockHorizontal = mapChipField_->GetNumBlockHorizontal();
 

@@ -91,11 +91,19 @@ public:
 	/// <returns>再生ハンドル</returns>
 	uint32_t PlayWave(uint32_t soundDataHandle, bool loopFlag = false, float volume = 1.0f);
 
+	void PlayAudio(int& Audio, int& AudioHandle, bool loopFlag, float volume = 1.0f) {
+		if (IsPlaying(Audio) == 0 || Audio == -1) {
+			Audio = PlayWave(AudioHandle, loopFlag, volume);
+		}
+	}
+
 	/// <summary>
 	/// 音声停止
 	/// </summary>
 	/// <param name="voiceHandle">再生ハンドル</param>
 	void StopWave(uint32_t voiceHandle);
+
+	void StopAudio(int AudioHandle) { StopWave(AudioHandle); }
 
 	/// <summary>
 	/// 音声再生中かどうか

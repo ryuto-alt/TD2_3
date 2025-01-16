@@ -10,12 +10,22 @@ void GameOverScene::Initialize() {
 
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
+
 	audio_ = Audio::GetInstance();
+	BGMHandle_ = audio_->LoadWave("mokugyo.wav");
 }
 
 void GameOverScene::Update() {
+
+	// BGMが再生されていない場合のみ再生する
+	if (!isBGMPlaying_) {
+		audio_->PlayAudio(BGMAudio_, BGMHandle_, true, 0.3f);
+		isBGMPlaying_ = true; // フラグを立てる
+	}
+
 	if (Input::GetInstance()->PushKey(DIK_3)) {
 		finished_ = true;
+		audio_->StopAudio(BGMAudio_);
 	}
 }
 

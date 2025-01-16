@@ -9,11 +9,22 @@ void TitleScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	titleTextureHandle_ = TextureManager::Load("title/title.png");
 	sprite_ = Sprite::Create(titleTextureHandle_, {0, 0});
+
+	audio_ = Audio::GetInstance();
+	BGMHandle_ = audio_->LoadWave("mokugyo.wav");
 }
 
 void TitleScene::Update() {
+
+	// BGMが再生されていない場合のみ再生する
+	if (!isBGMPlaying_) {
+		audio_->PlayAudio(BGMAudio_, BGMHandle_, true, 0.3f);
+		isBGMPlaying_ = true; // フラグを立てる
+	}
+
 	if (Input::GetInstance()->PushKey(DIK_1)) {
 		finished_ = true;
+		audio_->StopAudio(BGMAudio_);
 	}
 }
 
