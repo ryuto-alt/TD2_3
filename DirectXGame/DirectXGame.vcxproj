@@ -119,6 +119,7 @@
     <ClCompile Include="mymath.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
+    <ClCompile Include="skydome.cpp" />
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="WorldTransformEx.cpp" />
   </ItemGroup>
@@ -160,6 +161,7 @@
     <ClInclude Include="mymath.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="scene\GameScene.h" />
+    <ClInclude Include="skydome.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="WorldTransformEx.h" />
   </ItemGroup>

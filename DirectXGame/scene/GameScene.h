@@ -4,17 +4,18 @@
 #include "Audio.h"
 #include "DebugCamera.h"
 #include "DirectXCommon.h"
+#include "ImGuiManager.h"
 #include "Input.h"
 #include "Model.h"
 #include "Player.h"
+#include "Skydome.h"
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "mapchip.h"
+
 #include <Camera.h>
 #include <imgui.h>
-#include "ImGuiManager.h"
-
 
 /// <summary>
 /// ゲームシーン
@@ -96,4 +97,9 @@ private: // メンバ変数
 	Vector3 playerPosition2 = mapChipField_->GetMapChipPositionByIndex(8, -1);
 	Vector3 playerPosition3 = mapChipField_->GetMapChipPositionByIndex(-1, 5);
 	Vector3 playerPosition4 = mapChipField_->GetMapChipPositionByIndex(16, 5);
+
+	// SkyDome
+	Skydome* skydome_ = nullptr;
+	Model* modelSkydome_ = nullptr;
+	//std::vector<std::vector<WorldTransform*>> worldTransformBlocks_;
 };

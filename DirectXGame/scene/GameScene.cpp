@@ -10,6 +10,7 @@ GameScene::~GameScene() {
 	delete player2;
 	delete player3;
 	delete player4;
+	delete skydome_;
 }
 
 void GameScene::Initialize() {
@@ -35,6 +36,13 @@ void GameScene::Initialize() {
 	GenerateBlcoks();
 
 	modelPlayer_ = Model::CreateFromOBJ("cube", true);
+
+
+	// SkyDome
+	skydome_ = new Skydome();
+	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
+	skydome_->Initialize(modelSkydome_, &viewProjection_);
+
 
 	/*Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(8, 12);
 	Vector3 playerPosition2 = mapChipField_->GetMapChipPositionByIndex(8, -1);
@@ -148,6 +156,8 @@ void GameScene::Draw() {
 			}
 		}
 	}
+
+	skydome_->Draw();
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
