@@ -8,6 +8,8 @@ GameScene::GameScene() {}
 GameScene::~GameScene() {
 	delete player;
 	delete player2;
+	delete player3;
+	delete player4;
 }
 
 void GameScene::Initialize() {
@@ -34,12 +36,16 @@ void GameScene::Initialize() {
 
 	modelPlayer_ = Model::CreateFromOBJ("cube", true);
 
-	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(8, 12);
+	/*Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(8, 12);
 	Vector3 playerPosition2 = mapChipField_->GetMapChipPositionByIndex(8, -1);
+	Vector3 playerPosition3 = mapChipField_->GetMapChipPositionByIndex(-1, 5);
+	Vector3 playerPosition4 = mapChipField_->GetMapChipPositionByIndex(16, 5);*/
 	player = new Player();
 	player2 = new Player();
 	player->Initialize(modelPlayer_, &viewProjection_, playerPosition);
 	player2->Initialize(modelPlayer_, &viewProjection_, playerPosition2);
+	player3->Initialize(modelPlayer_, &viewProjection_, playerPosition3);
+	player4->Initialize(modelPlayer_, &viewProjection_, playerPosition4);
 
 		// Camera
 	Camera_ = new Camera();
@@ -53,6 +59,8 @@ void GameScene::Update() {
 
 	player->Update();
 	player2->Update();
+	player3->Update2();
+	player4->Update2();
 
 	if (Input::GetInstance()->PushKey(DIK_2)) {
 		finished_ = true;
@@ -78,6 +86,11 @@ void GameScene::Update() {
 	viewProjection_.matView = Camera_->GetViewProjection().matView;
 	viewProjection_.matProjection = Camera_->GetViewProjection().matProjection;
 	viewProjection_.TransferMatrix();
+
+	ImGui::Begin("Scene");
+	ImGui::Text("playerPos3: %f",playerPosition3.y ); // シーン名を表示
+	ImGui::Text("playerPos4: %f",playerPosition4.y ); // シーン名を表示
+	ImGui::End();
 
 }
 
@@ -112,6 +125,8 @@ void GameScene::Draw() {
 
 	player->Draw();
 	player2->Draw();
+	player3->Draw();
+	player4->Draw();
 
 	for (uint32_t i = 0; i < worldTransformBlocks_.size(); ++i) {
 		for (uint32_t j = 0; j < worldTransformBlocks_[i].size(); ++j) {

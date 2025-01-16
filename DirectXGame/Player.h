@@ -28,6 +28,7 @@ public:
 	void Initialize(Model* model, ViewProjection* viewProjection, const Vector3& pos);
 	// 更新
 	void Update();
+	void Update2();
 
 	void Draw();
 
@@ -37,6 +38,7 @@ public:
 	void SetMapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; }
 
 	void MovePlayer();
+	void MovePlayer2();
 
 	void CheckMapCollision(CollisionMapInfo& info);
 	void CheckMapCollisionUp(CollisionMapInfo& info);

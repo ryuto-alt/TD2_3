@@ -84,9 +84,16 @@ private: // メンバ変数
 	std::list<Player*> players_;
 	Player* player = new Player();
 	Player* player2 = new Player();
+	Player* player3 = new Player();
+	Player* player4 = new Player();
 
 	Camera* Camera_ = nullptr;
 
 	Vector3 railcameraPos = {-85, 7, -40};
 	Vector3 railcameraRad = {0, 0, 0};
+
+	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(8, 12);
+	Vector3 playerPosition2 = mapChipField_->GetMapChipPositionByIndex(8, -1);
+	Vector3 playerPosition3 = mapChipField_->GetMapChipPositionByIndex(-1, 5);
+	Vector3 playerPosition4 = mapChipField_->GetMapChipPositionByIndex(16, 5);
 };

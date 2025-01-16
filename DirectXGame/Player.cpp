@@ -6,6 +6,10 @@
 #include <algorithm>
 #include <array>
 #include <cassert>
+#ifdef _DEBUG
+#include"imgui.h"
+#endif
+
 #include <iostream>
 #include <numbers>
 #include <mymath.h>
@@ -49,6 +53,31 @@ void Player::Update() {
 
 }
 
+void Player::Update2() {
+	worldTransform_.TransferMatrix();
+
+	MovePlayer2();
+
+	// 衝突情報を初期化
+	CollisionMapInfo collisionMapInfo;
+	// 移動量に速度の値をコピー
+	collisionMapInfo.movement = velocity_;
+	collisionMapInfo.landingFlag = false;
+	collisionMapInfo.wallContactFlag = false;
+	// マップ衝突チェック
+	CheckMapCollision(collisionMapInfo);
+
+	JudgmentMove(collisionMapInfo);
+
+	CeilingContact(collisionMapInfo);
+
+	GraundSetting(collisionMapInfo);
+
+
+	worldTransform_.UpdateMatarix();
+
+}
+
 void Player::Draw() { model_->Draw(worldTransform_, *viewProjection_); }
 
 // 当たり判定
@@ -81,12 +110,12 @@ void Player::OnCollision(const Enemy* enemy) {
 void Player::MovePlayer() {
 
 	// 右移動操作
-	if (Input::GetInstance()->TriggerKey(DIK_RIGHT) && worldTransform_.translation_.x < -72) {
+	if (Input::GetInstance()->TriggerKey(DIK_D) && worldTransform_.translation_.x < -72) {
 		// 移動
 		velocity_.x = MapChipField::kBlockWidth;
 	}
 	// 左移動操作
-	else if (Input::GetInstance()->TriggerKey(DIK_LEFT) && worldTransform_.translation_.x > -97) {
+	else if (Input::GetInstance()->TriggerKey(DIK_A) && worldTransform_.translation_.x > -97) {
 		// 移動
 		velocity_.x = -MapChipField::kBlockWidth;
 	}
@@ -95,6 +124,25 @@ void Player::MovePlayer() {
 		// 停止
 		velocity_.x = 0;
 	}
+}
+
+void Player::MovePlayer2() {
+	// 右移動操作
+	if (Input::GetInstance()->TriggerKey(DIK_W) && worldTransform_.translation_.y < 100) {
+		// 移動
+		velocity_.y = MapChipField::kBlockHeight;
+	}
+	// 左移動操作
+	else if (Input::GetInstance()->TriggerKey(DIK_S) && worldTransform_.translation_.y > -97) {
+		// 移動
+		velocity_.y = -MapChipField::kBlockHeight;
+	}
+	// どちらのキーも押されていない場合
+	else {
+		// 停止
+		velocity_.y = 0;
+}
+
 }
 
 void Player::CeilingContact(const CollisionMapInfo& info) {
