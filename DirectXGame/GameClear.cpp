@@ -12,7 +12,7 @@ void GameClearScene::Initialize() {
 	input_ = Input::GetInstance();
 
 	audio_ = Audio::GetInstance();
-	BGMHandle_ = audio_->LoadWave("mokugyo.wav");
+	BGMHandle_ = audio_->LoadWave("fanfare.wav");
 }
 
 void GameClearScene::Update() {
