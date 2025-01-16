@@ -20,7 +20,7 @@ void GameScene::Initialize() {
 	NormalBlock = Model::CreateFromOBJ("cube", true);
 	BomBlock = Model::CreateFromOBJ("bomblock", true);
 	SlimeBlock = Model::CreateFromOBJ("slime", true);
-	EnemyBlock = Model::CreateFromOBJ("enemyblock", true);
+	EnemyBlock = Model::CreateFromOBJ("enemy", true);
 	GoalBlock = Model::CreateFromOBJ("goalblock", true);
 
 	// マップチップフィールドの生成
