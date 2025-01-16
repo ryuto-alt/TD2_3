@@ -128,12 +128,12 @@ void Player::MovePlayer() {
 
 void Player::MovePlayer2() {
 	// 右移動操作
-	if (Input::GetInstance()->TriggerKey(DIK_W) && worldTransform_.translation_.y < 100) {
+	if (Input::GetInstance()->TriggerKey(DIK_W) && worldTransform_.translation_.y < 15) {
 		// 移動
 		velocity_.y = MapChipField::kBlockHeight;
 	}
 	// 左移動操作
-	else if (Input::GetInstance()->TriggerKey(DIK_S) && worldTransform_.translation_.y > -97) {
+	else if (Input::GetInstance()->TriggerKey(DIK_S) && worldTransform_.translation_.y > -2) {
 		// 移動
 		velocity_.y = -MapChipField::kBlockHeight;
 	}
