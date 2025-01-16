@@ -90,7 +90,7 @@ private: // メンバ変数
 
 	Camera* Camera_ = nullptr;
 
-	Vector3 railcameraPos = {-85, 7, -40};
+	Vector3 railcameraPos = {-85, 7, -200};
 	Vector3 railcameraRad = {0, 0, 0};
 
 	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(8, 12);
