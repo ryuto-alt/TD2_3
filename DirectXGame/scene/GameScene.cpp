@@ -44,10 +44,7 @@ void GameScene::Initialize() {
 	skydome_->Initialize(modelSkydome_, &viewProjection_);
 
 
-	/*Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(8, 12);
-	Vector3 playerPosition2 = mapChipField_->GetMapChipPositionByIndex(8, -1);
-	Vector3 playerPosition3 = mapChipField_->GetMapChipPositionByIndex(-1, 5);
-	Vector3 playerPosition4 = mapChipField_->GetMapChipPositionByIndex(16, 5);*/
+
 	player = new Player();
 	player2 = new Player();
 	player->Initialize(modelPlayer_, &viewProjection_, playerPosition);

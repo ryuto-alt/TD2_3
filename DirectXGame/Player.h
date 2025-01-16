@@ -40,6 +40,10 @@ public:
 	void MovePlayer();
 	void MovePlayer2();
 
+	void SnapToBlockX();
+
+	void SnapToBlockY();
+
 	void CheckMapCollision(CollisionMapInfo& info);
 	void CheckMapCollisionUp(CollisionMapInfo& info);
 	void CheckMapCollisionDown(CollisionMapInfo& info);

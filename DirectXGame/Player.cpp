@@ -7,13 +7,12 @@
 #include <array>
 #include <cassert>
 #ifdef _DEBUG
-#include"imgui.h"
+#include "imgui.h"
 #endif
 
 #include <iostream>
-#include <numbers>
 #include <mymath.h>
-
+#include <numbers>
 
 void Player::Initialize(Model* model, ViewProjection* viewProjection, const Vector3& position) {
 	assert(model);
@@ -50,7 +49,6 @@ void Player::Update() {
 	GraundSetting(collisionMapInfo);
 
 	worldTransform_.UpdateMatarix();
-
 }
 
 void Player::Update2() {
@@ -73,9 +71,7 @@ void Player::Update2() {
 
 	GraundSetting(collisionMapInfo);
 
-
 	worldTransform_.UpdateMatarix();
-
 }
 
 void Player::Draw() { model_->Draw(worldTransform_, *viewProjection_); }
@@ -108,42 +104,57 @@ void Player::OnCollision(const Enemy* enemy) {
 }
 
 void Player::MovePlayer() {
-
 	// 右移動操作
-	if (Input::GetInstance()->TriggerKey(DIK_D) && worldTransform_.translation_.x < -72) {
+	if (Input::GetInstance()->PushKey(DIK_D) && worldTransform_.translation_.x < -72) {
 		// 移動
-		velocity_.x = MapChipField::kBlockWidth;
+		velocity_.x = MapChipField::kBlockWidth / 4;
 	}
 	// 左移動操作
-	else if (Input::GetInstance()->TriggerKey(DIK_A) && worldTransform_.translation_.x > -97) {
+	else if (Input::GetInstance()->PushKey(DIK_A) && worldTransform_.translation_.x > -97) {
 		// 移動
-		velocity_.x = -MapChipField::kBlockWidth;
+		velocity_.x = -MapChipField::kBlockWidth / 4;
 	}
 	// どちらのキーも押されていない場合
 	else {
 		// 停止
 		velocity_.x = 0;
+		SnapToBlockX();
 	}
 }
 
 void Player::MovePlayer2() {
-	// 右移動操作
-	if (Input::GetInstance()->TriggerKey(DIK_W) && worldTransform_.translation_.y < 15) {
+	// 上移動操作
+	if (Input::GetInstance()->PushKey(DIK_W) && worldTransform_.translation_.y < 15) {
 		// 移動
-		velocity_.y = MapChipField::kBlockHeight;
+		velocity_.y = MapChipField::kBlockHeight / 4;
 	}
-	// 左移動操作
-	else if (Input::GetInstance()->TriggerKey(DIK_S) && worldTransform_.translation_.y > -2) {
+	// 下移動操作
+	else if (Input::GetInstance()->PushKey(DIK_S) && worldTransform_.translation_.y > -2) {
 		// 移動
-		velocity_.y = -MapChipField::kBlockHeight;
+		velocity_.y = -MapChipField::kBlockHeight / 4;
 	}
 	// どちらのキーも押されていない場合
 	else {
 		// 停止
 		velocity_.y = 0;
+		SnapToBlockY();
+	}
 }
 
+void Player::SnapToBlockX() {
+	// X座標をブロック幅にスナップ
+	float snappedX = round(worldTransform_.translation_.x / MapChipField::kBlockWidth) * MapChipField::kBlockWidth;
+	worldTransform_.translation_.x = snappedX;
 }
+
+void Player::SnapToBlockY() {
+	// Y座標をブロック高さにスナップ
+	float snappedY = round(worldTransform_.translation_.y / MapChipField::kBlockHeight) * MapChipField::kBlockHeight;
+	worldTransform_.translation_.y = snappedY;
+}
+
+
+
 
 void Player::CeilingContact(const CollisionMapInfo& info) {
 	// 天井、当り判定
