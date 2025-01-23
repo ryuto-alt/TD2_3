@@ -33,6 +33,11 @@ void GameScene::Initialize() {
 
 	// デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
+
+	// フェード
+	fade_ = new Fade();
+	fade_->Initialize();
+	fade_->Start(Fade::Status::FadeIn, 1.0f);
 }
 
 void GameScene::Update() {
@@ -44,8 +49,28 @@ void GameScene::Update() {
 	}
 
 	if (Input::GetInstance()->PushKey(DIK_2)) {
-		finished_ = true;
-		audio_->StopAudio(BGMAudio_);
+		fade_->Start(Fade::Status::FadeOut, 1.0f);
+		phaseFade_ = PhaseFade::kFadoOut;
+	}
+
+	switch (phaseFade_) {
+
+	case GameScene::PhaseFade::kFadeIn:
+		fade_->Update();
+		if (fade_->IsFinished()) {
+			fade_->Stop();
+			phaseFade_ = PhaseFade::kMain;
+		}
+		break;
+
+	case GameScene::PhaseFade::kFadoOut:
+		fade_->Update();
+		if (fade_->IsFinished()) {
+			//fade_->Stop();
+			audio_->StopAudio(BGMAudio_);
+			finished_ = true;
+		}
+		break;
 	}
 
 #pragma region ブロック描画
@@ -154,6 +179,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+
+	fade_->Draw();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();

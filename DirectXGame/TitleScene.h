@@ -2,6 +2,7 @@
 #include "Sprite.h"
 #include "Input.h"
 #include "Audio.h"
+#include "Fade.h"
 #include "DirectXCommon.h"
 class TitleScene {
 
@@ -15,6 +16,17 @@ public:
 	bool IsFinished() const { return finished_; }
 
 private:
+	// シーンのフェード
+	enum class PhaseFade {
+		kFadeIn,	// フェードイン
+		kMain,	    // メイン部
+		kFadoOut,	// フェードアウト
+	};
+	// フェード
+	Fade* fade_ = nullptr;
+	// 現在のフェーズ
+	PhaseFade phaseFade_ = PhaseFade::kFadeIn;
+
 	// BGM
 	Audio* audio_ = nullptr;
 	int BGMHandle_ = 0;

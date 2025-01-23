@@ -5,6 +5,7 @@
 #include "Input.h"
 #include "Model.h"
 #include "Sprite.h"
+#include "Fade.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
@@ -48,6 +49,17 @@ public: // メンバ関数
 	bool IsFinished() const { return finished_; }
 
 private: // メンバ変数
+	// シーンのフェード
+	enum class PhaseFade {
+		kFadeIn,	// フェードイン
+		kMain,	    // メイン部
+		kFadoOut,	// フェードアウト
+	};
+	// フェード
+	Fade* fade_ = nullptr;
+	// 現在のフェーズ
+	PhaseFade phaseFade_ = PhaseFade::kFadeIn;
+
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;

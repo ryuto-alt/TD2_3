@@ -12,6 +12,11 @@ void TitleScene::Initialize() {
 
 	audio_ = Audio::GetInstance();
 	BGMHandle_ = audio_->LoadWave("mokugyo.wav");
+
+	// フェード
+	fade_ = new Fade();
+	fade_->Initialize();
+	fade_->Start(Fade::Status::FadeIn, 1.0f);
 }
 
 void TitleScene::Update() {
@@ -23,8 +28,28 @@ void TitleScene::Update() {
 	}
 
 	if (Input::GetInstance()->PushKey(DIK_1)) {
-		finished_ = true;
-		audio_->StopAudio(BGMAudio_);
+		fade_->Start(Fade::Status::FadeOut, 1.0f);
+		phaseFade_ = PhaseFade::kFadoOut;
+	}
+
+	switch (phaseFade_) {
+
+	case TitleScene::PhaseFade::kFadeIn:
+		fade_->Update();
+		if (fade_->IsFinished()) {
+			fade_->Stop();
+			phaseFade_ = PhaseFade::kMain;
+		}
+		break;
+
+	case TitleScene::PhaseFade::kFadoOut:
+		fade_->Update();
+		if (fade_->IsFinished()) {
+			//fade_->Stop();
+			audio_->StopAudio(BGMAudio_);
+			finished_ = true;
+		}
+		break;
 	}
 }
 
@@ -41,5 +66,16 @@ void TitleScene::Draw() {
 	// 深度バッファクリア
 	dxCommon_->ClearDepthBuffer();
 	
+#pragma region 前景スプライト描画
+	// 前景スプライト描画前処理
+	Sprite::PreDraw(commandList);
+	/// <summary>
+	/// ここに前景スプライトの描画処理を追加できる
+	/// </summary>
 
+	fade_->Draw();
+
+	// スプライト描画後処理
+	Sprite::PostDraw();
+#pragma endregion
 }
