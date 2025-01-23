@@ -21,12 +21,10 @@ void Player::Initialize(Model* model, ViewProjection* viewProjection, const Vect
 	worldTransform_.translation_ = position;
 
 	worldTransform_.rotation_.y = std::numbers::pi_v<float> / 2.0f;
-	
 
 	// マップチップフィールドの生成
 	mapChipField_ = new MapChipField;
 	mapChipField_->LoadMapChipCsv("Resources/map.csv");
-
 
 	model_ = model;
 
@@ -34,25 +32,32 @@ void Player::Initialize(Model* model, ViewProjection* viewProjection, const Vect
 }
 
 void Player::Update() {
-
 	worldTransform_.TransferMatrix();
 
 	MovePlayer();
 
 	// 衝突情報を初期化
 	CollisionMapInfo collisionMapInfo;
-	// 移動量に速度の値をコピー
 	collisionMapInfo.movement = velocity_;
 	collisionMapInfo.landingFlag = false;
 	collisionMapInfo.wallContactFlag = false;
+
 	// マップ衝突チェック
 	CheckMapCollision(collisionMapInfo);
-
 	JudgmentMove(collisionMapInfo);
-
 	CeilingContact(collisionMapInfo);
-
 	GraundSetting(collisionMapInfo);
+
+	// 座標制限を適用
+	worldTransform_.translation_.x = std::clamp(worldTransform_.translation_.x, 2.0f, 28.0f);
+	// worldTransform_.translation_.y = std::clamp(worldTransform_.translation_.y, 2.0f, 16.0f);
+
+#ifdef _DEBUG
+	ImGui::Begin("Player Debug");
+	ImGui::Text("Player Position1,2");
+	ImGui::DragFloat3("Position", &worldTransform_.translation_.x);
+	ImGui::End();
+#endif
 
 	worldTransform_.UpdateMatarix();
 }
@@ -64,18 +69,26 @@ void Player::Update2() {
 
 	// 衝突情報を初期化
 	CollisionMapInfo collisionMapInfo;
-	// 移動量に速度の値をコピー
 	collisionMapInfo.movement = velocity_;
 	collisionMapInfo.landingFlag = false;
 	collisionMapInfo.wallContactFlag = false;
+
 	// マップ衝突チェック
 	CheckMapCollision(collisionMapInfo);
-
 	JudgmentMove(collisionMapInfo);
-
 	CeilingContact(collisionMapInfo);
-
 	GraundSetting(collisionMapInfo);
+
+	// 座標制限を適用
+	// worldTransform_.translation_.x = std::clamp(worldTransform_.translation_.x, 2.0f, 20.0f);
+	worldTransform_.translation_.y = std::clamp(worldTransform_.translation_.y, 18.0f, 36.0f);
+
+#ifdef _DEBUG
+	ImGui::Begin("Player Debug");
+	ImGui::Text("Player Position3,4");
+	ImGui::DragFloat3("Position", &worldTransform_.translation_.y);
+	ImGui::End();
+#endif
 
 	worldTransform_.UpdateMatarix();
 }
@@ -111,18 +124,15 @@ void Player::OnCollision(const Enemy* enemy) {
 
 void Player::MovePlayer() {
 	// 右移動操作
-	if (Input::GetInstance()->PushKey(DIK_D) && worldTransform_.translation_.x < -72) {
-		// 移動
+	if (Input::GetInstance()->PushKey(DIK_D)) {
 		velocity_.x = MapChipField::kBlockWidth / 4;
 	}
 	// 左移動操作
-	else if (Input::GetInstance()->PushKey(DIK_A) && worldTransform_.translation_.x > -97) {
-		// 移動
+	else if (Input::GetInstance()->PushKey(DIK_A)) {
 		velocity_.x = -MapChipField::kBlockWidth / 4;
 	}
-	// どちらのキーも押されていない場合
+	// 停止
 	else {
-		// 停止
 		velocity_.x = 0;
 		SnapToBlockX();
 	}
@@ -130,18 +140,15 @@ void Player::MovePlayer() {
 
 void Player::MovePlayer2() {
 	// 上移動操作
-	if (Input::GetInstance()->PushKey(DIK_W) && worldTransform_.translation_.y < 15) {
-		// 移動
+	if (Input::GetInstance()->PushKey(DIK_W)) {
 		velocity_.y = MapChipField::kBlockHeight / 4;
 	}
 	// 下移動操作
-	else if (Input::GetInstance()->PushKey(DIK_S) && worldTransform_.translation_.y > -2) {
-		// 移動
+	else if (Input::GetInstance()->PushKey(DIK_S)) {
 		velocity_.y = -MapChipField::kBlockHeight / 4;
 	}
-	// どちらのキーも押されていない場合
+	// 停止
 	else {
-		// 停止
 		velocity_.y = 0;
 		SnapToBlockY();
 	}
@@ -158,9 +165,6 @@ void Player::SnapToBlockY() {
 	float snappedY = round(worldTransform_.translation_.y / MapChipField::kBlockHeight) * MapChipField::kBlockHeight;
 	worldTransform_.translation_.y = snappedY;
 }
-
-
-
 
 void Player::CeilingContact(const CollisionMapInfo& info) {
 	// 天井、当り判定

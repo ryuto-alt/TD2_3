@@ -92,10 +92,6 @@ void GameScene::Update() {
 	viewProjection_.matProjection = Camera_->GetViewProjection().matProjection;
 	viewProjection_.TransferMatrix();
 
-	ImGui::Begin("Scene");
-	ImGui::Text("playerPos3: %f",playerPosition3.y ); // シーン名を表示
-	ImGui::Text("playerPos4: %f",playerPosition4.y ); // シーン名を表示
-	ImGui::End();
 
 }
 

@@ -88,7 +88,7 @@ private: // メンバ変数
 	Player* player3 = new Player();
 	Player* player4 = new Player();
 
-	Camera* Camera_ = nullptr;
+	Camera* Camera_ = nullptr;\
 
 	Vector3 railcameraPos = {15.5f, 27.5f, -40.0f};
 	Vector3 railcameraRad = {0, 0, 0};
