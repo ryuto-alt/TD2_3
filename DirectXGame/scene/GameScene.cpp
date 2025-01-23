@@ -10,6 +10,7 @@ GameScene::~GameScene() {
 	delete player2;
 	delete player3;
 	delete player4;
+	delete inPlayer;
 	delete skydome_;
 
 		for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
@@ -58,10 +59,12 @@ void GameScene::Initialize() {
 	Vector3 playerPosition2 = mapChipField_->GetMapChipPositionByIndex(8, -1);
 	Vector3 playerPosition3 = mapChipField_->GetMapChipPositionByIndex(-1, 5);
 	Vector3 playerPosition4 = mapChipField_->GetMapChipPositionByIndex(16, 5);
+	Vector3 inPlayerPos = mapChipField_->GetMapChipPositionByIndex(1, 6);
 	player->Initialize(modelPlayer_, &viewProjection_, playerPosition);
 	player2->Initialize(modelPlayer_, &viewProjection_, playerPosition2);
 	player3->Initialize(modelPlayer_, &viewProjection_, playerPosition3);
 	player4->Initialize(modelPlayer_, &viewProjection_, playerPosition4);
+	inPlayer->Initialize(modelPlayer_, &viewProjection_, inPlayerPos);
 
 		// Camera
 	Camera_ = new Camera();
@@ -77,6 +80,7 @@ void GameScene::Update() {
 	player2->Update();
 	player3->Update2();
 	player4->Update2();
+	inPlayer->inPlayerUpdate();
 
 	if (Input::GetInstance()->PushKey(DIK_2)) {
 		finished_ = true;
@@ -143,6 +147,7 @@ void GameScene::Draw() {
 	player2->Draw();
 	player3->Draw();
 	player4->Draw();
+	inPlayer->Draw();
 
 	for (uint32_t i = 0; i < worldTransformBlocks_.size(); ++i) {
 		for (uint32_t j = 0; j < worldTransformBlocks_[i].size(); ++j) {

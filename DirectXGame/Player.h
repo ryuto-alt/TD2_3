@@ -29,6 +29,7 @@ public:
 	// 更新
 	void Update();
 	void Update2();
+	void inPlayerUpdate();
 
 	void Draw();
 

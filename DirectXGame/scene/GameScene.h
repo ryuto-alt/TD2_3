@@ -87,6 +87,7 @@ private: // メンバ変数
 	Player* player2 = new Player();
 	Player* player3 = new Player();
 	Player* player4 = new Player();
+	Player* inPlayer = new Player();
 
 	Camera* Camera_ = nullptr;
 

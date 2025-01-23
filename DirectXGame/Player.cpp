@@ -21,12 +21,10 @@ void Player::Initialize(Model* model, ViewProjection* viewProjection, const Vect
 	worldTransform_.translation_ = position;
 
 	worldTransform_.rotation_.y = std::numbers::pi_v<float> / 2.0f;
-	
 
 	// マップチップフィールドの生成
 	mapChipField_ = new MapChipField;
 	mapChipField_->LoadMapChipCsv("Resources/map.csv");
-
 
 	model_ = model;
 
@@ -59,7 +57,7 @@ void Player::Update() {
 
 void Player::Update2() {
 
-		worldTransform_.TransferMatrix();
+	worldTransform_.TransferMatrix();
 
 	MovePlayer2();
 
@@ -73,6 +71,26 @@ void Player::Update2() {
 	CheckMapCollision(collisionMapInfo);
 
 	JudgmentMove(collisionMapInfo);
+
+	CeilingContact(collisionMapInfo);
+
+	GraundSetting(collisionMapInfo);
+
+	worldTransform_.UpdateMatarix();
+}
+
+void Player::inPlayerUpdate() {
+
+	worldTransform_.TransferMatrix();
+
+	// 衝突情報を初期化
+	CollisionMapInfo collisionMapInfo;
+	// 移動量に速度の値をコピー
+	collisionMapInfo.movement = velocity_;
+	collisionMapInfo.landingFlag = false;
+	collisionMapInfo.wallContactFlag = false;
+	// マップ衝突チェック
+	CheckMapCollision(collisionMapInfo);
 
 	CeilingContact(collisionMapInfo);
 
@@ -110,8 +128,6 @@ void Player::OnCollision(const Enemy* enemy) {
 	// ジャンプ開始
 	velocity_ += Vector3(0, kJumpAcceleration / 1.0f, 0);
 }
-
-
 
 void Player::MovePlayer() {
 	// 右移動操作
@@ -162,7 +178,6 @@ void Player::SnapToBlockY() {
 	float snappedY = round(worldTransform_.translation_.y / MapChipField::kBlockHeight) * MapChipField::kBlockHeight;
 	worldTransform_.translation_.y = snappedY;
 }
-
 
 void Player::CeilingContact(const CollisionMapInfo& info) {
 	// 天井、当り判定
