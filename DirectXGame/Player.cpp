@@ -59,6 +59,27 @@ void Player::Update() {
 
 void Player::Update2() {
 
+		worldTransform_.TransferMatrix();
+
+	MovePlayer2();
+
+	// 衝突情報を初期化
+	CollisionMapInfo collisionMapInfo;
+	// 移動量に速度の値をコピー
+	collisionMapInfo.movement = velocity_;
+	collisionMapInfo.landingFlag = false;
+	collisionMapInfo.wallContactFlag = false;
+	// マップ衝突チェック
+	CheckMapCollision(collisionMapInfo);
+
+	JudgmentMove(collisionMapInfo);
+
+	CeilingContact(collisionMapInfo);
+
+	GraundSetting(collisionMapInfo);
+
+	worldTransform_.UpdateMatarix();
+
 }
 
 void Player::Draw() { model_->Draw(worldTransform_, *viewProjection_); }
@@ -94,12 +115,12 @@ void Player::OnCollision(const Enemy* enemy) {
 
 void Player::MovePlayer() {
 	// 右移動操作
-	if (Input::GetInstance()->PushKey(DIK_D)) {
+	if (Input::GetInstance()->PushKey(DIK_D) && worldTransform_.translation_.x < 28) {
 		// 移動
 		velocity_.x = MapChipField::kBlockWidth / 4;
 	}
 	// 左移動操作
-	else if (Input::GetInstance()->PushKey(DIK_A)) {
+	else if (Input::GetInstance()->PushKey(DIK_A) && worldTransform_.translation_.x > 2) {
 		// 移動
 		velocity_.x = -MapChipField::kBlockWidth / 4;
 	}
@@ -113,12 +134,12 @@ void Player::MovePlayer() {
 
 void Player::MovePlayer2() {
 	// 上移動操作
-	if (Input::GetInstance()->PushKey(DIK_W)) {
+	if (Input::GetInstance()->PushKey(DIK_W) && worldTransform_.translation_.y < 36) {
 		// 移動
 		velocity_.y = MapChipField::kBlockHeight / 4;
 	}
 	// 下移動操作
-	else if (Input::GetInstance()->PushKey(DIK_S)) {
+	else if (Input::GetInstance()->PushKey(DIK_S) && worldTransform_.translation_.y > 17) {
 		// 移動
 		velocity_.y = -MapChipField::kBlockHeight / 4;
 	}
@@ -267,7 +288,7 @@ void Player::CheckMapCollisionRight(CollisionMapInfo& info, bool& hit) {
 
 	if (hit) {
 		MapChipField::Rect rect = mapChipField_->GetRectByIndex(indexSet.xIndex, indexSet.yIndex);
-		info.movement.x = std::max(0.0f, (rect.right - worldTransform_.translation_.x) - (kWidth / 2.0f + kBlank));
+		info.movement.x = std::max(0.0f, (rect.right - worldTransform_.translation_.x) - (kWidth / 2.0f));
 	}
 }
 

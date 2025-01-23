@@ -20,8 +20,9 @@ std::map<std::string, MapChipType> mapChipTable = {
 
 MapChipField::IndexSet MapChipField::GetMapChipIndexSetByPosition(const Vector3& position) {
 	IndexSet indexSet = {};
-	indexSet.xIndex = static_cast<uint32_t>((position.x + kBlockWidth / 2) / kBlockWidth);
-	indexSet.yIndex = kNumBlockVirtical - 1 - static_cast<uint32_t>((position.y + kBlockHeight / 2) / kBlockHeight);
+	indexSet.xIndex = static_cast<uint32_t>(round(position.x / kBlockWidth));
+	indexSet.yIndex = kNumBlockVirtical - 1 - static_cast<uint32_t>(round(position.y / kBlockHeight));
+
 	return indexSet;
 }
 
@@ -92,4 +93,10 @@ MapChipType MapChipField::GetMapChipTypeByIndex(uint32_t xIndex, uint32_t yIndex
 	return mapChipData_.data[yIndex][xIndex];
 }
 
-Vector3 MapChipField::GetMapChipPositionByIndex(uint32_t xIndex, uint32_t yIndex) { return Vector3(kBlockWidth * xIndex, kBlockHeight * (kNumBlockVirtical - 1 - yIndex), 0); }
+Vector3 MapChipField::GetMapChipPositionByIndex(int xIndex, int yIndex) {
+    // 必要に応じて負のインデックスを処理
+    float xPosition = kBlockWidth * xIndex;
+    float yPosition = kBlockHeight * (kNumBlockVirtical - 1 - yIndex);
+
+    return Vector3(xPosition, yPosition, 0);
+}
