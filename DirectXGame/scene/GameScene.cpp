@@ -80,7 +80,16 @@ void GameScene::Update() {
 	player2->Update();
 	player3->Update2();
 	player4->Update2();
+	Vector3 player3Pos = player3->GetWorldPosition();
+	Vector3 inPlayerPos = player3Pos;
+	inPlayerPos.x += 2 * MapChipField::kBlockWidth; // player3 の位置から2マス分ずらす
+	inPlayer->SetPosition(inPlayerPos);
+
 	inPlayer->inPlayerUpdate();
+
+	if (Input::GetInstance()->PushKey(DIK_2)) {
+		finished_ = true;
+	}
 
 	if (Input::GetInstance()->PushKey(DIK_2)) {
 		finished_ = true;

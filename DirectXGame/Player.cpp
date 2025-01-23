@@ -78,26 +78,29 @@ void Player::Update2() {
 
 	worldTransform_.UpdateMatarix();
 }
-
+void Player::SetPosition(const Vector3& position) {
+	worldTransform_.translation_ = position;
+	worldTransform_.UpdateMatarix();
+}
 void Player::inPlayerUpdate() {
-
 	worldTransform_.TransferMatrix();
 
 	// 衝突情報を初期化
 	CollisionMapInfo collisionMapInfo;
-	// 移動量に速度の値をコピー
 	collisionMapInfo.movement = velocity_;
 	collisionMapInfo.landingFlag = false;
 	collisionMapInfo.wallContactFlag = false;
+
 	// マップ衝突チェック
 	CheckMapCollision(collisionMapInfo);
 
 	CeilingContact(collisionMapInfo);
-
 	GraundSetting(collisionMapInfo);
 
-	worldTransform_.UpdateMatarix();
+	// 移動処理
+	JudgmentMove(collisionMapInfo);
 
+	worldTransform_.UpdateMatarix();
 }
 
 void Player::Draw() { model_->Draw(worldTransform_, *viewProjection_); }
