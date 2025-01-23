@@ -13,7 +13,7 @@ GameScene::~GameScene() {
 	delete inPlayer;
 	delete skydome_;
 
-		for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
+	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
 		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
 			delete worldTransformBlock;
 		}
@@ -45,13 +45,10 @@ void GameScene::Initialize() {
 
 	modelPlayer_ = Model::CreateFromOBJ("cube", true);
 
-
 	// SkyDome
 	skydome_ = new Skydome();
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 	skydome_->Initialize(modelSkydome_, &viewProjection_);
-
-
 
 	player = new Player();
 	player2 = new Player();
@@ -66,7 +63,7 @@ void GameScene::Initialize() {
 	player4->Initialize(modelPlayer_, &viewProjection_, playerPosition4);
 	inPlayer->Initialize(modelPlayer_, &viewProjection_, inPlayerPos);
 
-		// Camera
+	// Camera
 	Camera_ = new Camera();
 	Camera_->Initialize(railcameraPos, railcameraRad);
 
@@ -75,21 +72,36 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
-
 	player->Update();
 	player2->Update();
 	player3->Update2();
 	player4->Update2();
 	Vector3 player3Pos = player3->GetWorldPosition();
+	Vector3 player4Pos = player4->GetWorldPosition();
+
 	Vector3 inPlayerPos = player3Pos;
 	inPlayerPos.x += 2 * MapChipField::kBlockWidth; // player3 の位置から2マス分ずらす
 	inPlayer->SetPosition(inPlayerPos);
 
-	inPlayer->inPlayerUpdate();
-
-	if (Input::GetInstance()->PushKey(DIK_2)) {
-		finished_ = true;
+	// Space キーが押されたら inPlayer を +X 方向に移動させる
+	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+		moveFlg = true;
 	}
+
+	if (moveFlg) {
+		inPlayer->MoveRight(); // +X方向への移動
+
+		// 衝突判定
+		if (CheckCollisionRight(inPlayer->GetWorldPosition())) {
+			moveFlg = false; // 衝突したら移動を停止
+		}
+
+		if (inPlayerPos.x >= (player4Pos.x - 2) * (MapChipField::kBlockWidth)) {
+			moveFlg = false;
+		}
+	}
+
+	inPlayer->inPlayerUpdate();
 
 	if (Input::GetInstance()->PushKey(DIK_2)) {
 		finished_ = true;
@@ -117,12 +129,10 @@ void GameScene::Update() {
 	viewProjection_.TransferMatrix();
 
 	ImGui::Begin("Scene");
-	//ImGui::Text("playerPos3: %f",playerPosition3.y ); // シーン名を表示
-	//ImGui::Text("playerPos4: %f",playerPosition4.y ); // シーン名を表示
+	// ImGui::Text("playerPos3: %f",playerPosition3.y ); // シーン名を表示
+	// ImGui::Text("playerPos4: %f",playerPosition4.y ); // シーン名を表示
 	ImGui::End();
-
 }
-
 
 void GameScene::Draw() {
 
@@ -197,7 +207,6 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 
 #pragma endregion
-
 }
 
 void GameScene::GenerateBlcoks() {
@@ -245,4 +254,23 @@ void GameScene::GenerateBlcoks() {
 			}
 		}
 	}
+}
+
+bool GameScene::CheckCollisionRight(const Vector3& playerPos) {
+	// プレイヤーの右側の位置を計算
+	Vector3 rightPos = playerPos;
+	rightPos.x += MapChipField::kBlockWidth; // 1ブロック分右に移動
+
+	// マップチップのインデックスを取得
+	int indexX = static_cast<int>(rightPos.x / MapChipField::kBlockWidth);
+	int indexY = static_cast<int>(rightPos.z / MapChipField::kBlockWidth); // Z軸がY軸として扱われている場合
+
+	// マップチップの範囲外なら衝突なし
+	if (indexX < 0 || static_cast<uint32_t>(indexX) >= mapChipField_->GetNumBlockHorizontal() || indexY < 0 || static_cast<uint32_t>(indexY) >= mapChipField_->GetNumBlockVirtical()) {
+		return false;
+	}
+
+	// 右側のブロックが空でない場合は衝突
+	MapChipType chipType = mapChipField_->GetMapChipTypeByIndex(indexX, indexY);
+	return chipType != MapChipType::kBlank;
 }

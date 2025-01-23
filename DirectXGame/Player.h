@@ -30,6 +30,7 @@ public:
 	void Update();
 	void Update2();
 	void SetPosition(const Vector3& position);
+	void MoveRight();
 	void inPlayerUpdate();
 
 	void Draw();
@@ -66,6 +67,7 @@ public:
 
 	void OnCollision(const Enemy* enemy);
 
+	void SetVelocity(const Vector3& velocity);
 private:
 	// ワールドトランスフォーム
 	WorldTransform worldTransform_;

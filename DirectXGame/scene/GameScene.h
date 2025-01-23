@@ -50,7 +50,12 @@ public: // メンバ関数
 
 	void GenerateBlcoks();
 
+	bool CheckCollisionRight(const Vector3& playerPos);
+
+	bool CheckCollisionWithBlocksAndPlayer(Player* inPlayer, Player* targetPlayer);
+
 	bool IsFinished() const { return finished_; }
+	bool CheckCollisionWithBlocks(Player* inPlayer);
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -75,6 +80,7 @@ private: // メンバ変数
 
 	// デバッグカメラ有効
 	bool isDebugCameraActive_ = false;
+	bool moveFlg = false;
 	// デバッグカメラ
 	DebugCamera* debugCamera_ = nullptr;
 	/// <summary>

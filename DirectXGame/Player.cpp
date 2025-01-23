@@ -82,6 +82,11 @@ void Player::SetPosition(const Vector3& position) {
 	worldTransform_.translation_ = position;
 	worldTransform_.UpdateMatarix();
 }
+
+void Player::MoveRight() {
+	// +X 方向に移動
+	velocity_.x += MapChipField::kBlockWidth / 4; // 移動速度を設定
+}
 void Player::inPlayerUpdate() {
 	worldTransform_.TransferMatrix();
 
@@ -131,6 +136,8 @@ void Player::OnCollision(const Enemy* enemy) {
 	// ジャンプ開始
 	velocity_ += Vector3(0, kJumpAcceleration / 1.0f, 0);
 }
+
+void Player::SetVelocity(const Vector3& velocity) { this->velocity_ = velocity; }
 
 void Player::MovePlayer() {
 	// 右移動操作
