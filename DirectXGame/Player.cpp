@@ -139,7 +139,7 @@ void Player::MovePlayer2() {
 		velocity_.y = MapChipField::kBlockHeight / 4;
 	}
 	// 下移動操作
-	else if (Input::GetInstance()->PushKey(DIK_S) && worldTransform_.translation_.y > 17) {
+	else if (Input::GetInstance()->PushKey(DIK_S) && worldTransform_.translation_.y > 18) {
 		// 移動
 		velocity_.y = -MapChipField::kBlockHeight / 4;
 	}
