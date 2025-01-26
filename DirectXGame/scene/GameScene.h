@@ -50,12 +50,7 @@ public: // メンバ関数
 
 	void GenerateBlcoks();
 
-	bool CheckCollisionRight(const Vector3& playerPos);
-
-	bool CheckCollisionWithBlocksAndPlayer(Player* inPlayer, Player* targetPlayer);
-
 	bool IsFinished() const { return finished_; }
-	bool CheckCollisionWithBlocks(Player* inPlayer);
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -80,7 +75,6 @@ private: // メンバ変数
 
 	// デバッグカメラ有効
 	bool isDebugCameraActive_ = false;
-	bool moveFlg = false;
 	// デバッグカメラ
 	DebugCamera* debugCamera_ = nullptr;
 	/// <summary>
@@ -93,7 +87,7 @@ private: // メンバ変数
 	Player* player2 = new Player();
 	Player* player3 = new Player();
 	Player* player4 = new Player();
-	Player* inPlayer = new Player();
+	Player* player5 = new Player();
 
 	Camera* Camera_ = nullptr;
 
@@ -103,5 +97,5 @@ private: // メンバ変数
 	// SkyDome
 	Skydome* skydome_ = nullptr;
 	Model* modelSkydome_ = nullptr;
-	//std::vector<std::vector<WorldTransform*>> worldTransformBlocks_;
+	// std::vector<std::vector<WorldTransform*>> worldTransformBlocks_;
 };

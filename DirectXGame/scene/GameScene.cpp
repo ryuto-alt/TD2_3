@@ -10,7 +10,7 @@ GameScene::~GameScene() {
 	delete player2;
 	delete player3;
 	delete player4;
-	delete inPlayer;
+	delete player5; // 新しいプレイヤーの削除
 	delete skydome_;
 
 	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
@@ -52,16 +52,19 @@ void GameScene::Initialize() {
 
 	player = new Player();
 	player2 = new Player();
+	player3 = new Player();
+	player4 = new Player();
+	player5 = new Player(); // 新しいプレイヤーの初期化
 	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(8, 12);
 	Vector3 playerPosition2 = mapChipField_->GetMapChipPositionByIndex(8, -1);
 	Vector3 playerPosition3 = mapChipField_->GetMapChipPositionByIndex(-1, 5);
 	Vector3 playerPosition4 = mapChipField_->GetMapChipPositionByIndex(16, 5);
-	Vector3 inPlayerPos = mapChipField_->GetMapChipPositionByIndex(1, 6);
+	Vector3 playerPosition5 = mapChipField_->GetMapChipPositionByIndex(14, 5); // 新しいプレイヤーの座標
 	player->Initialize(modelPlayer_, &viewProjection_, playerPosition);
 	player2->Initialize(modelPlayer_, &viewProjection_, playerPosition2);
 	player3->Initialize(modelPlayer_, &viewProjection_, playerPosition3);
 	player4->Initialize(modelPlayer_, &viewProjection_, playerPosition4);
-	inPlayer->Initialize(modelPlayer_, &viewProjection_, inPlayerPos);
+	player5->Initialize(modelPlayer_, &viewProjection_, playerPosition5); // 新しいプレイヤーの初期化
 
 	// Camera
 	Camera_ = new Camera();
@@ -72,36 +75,41 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
+
 	player->Update();
 	player2->Update();
 	player3->Update2();
 	player4->Update2();
+
+	// player5が他のプレイヤーの近くにいるときに発射される方向を変更する
+	Vector3 playerPos = player->GetWorldPosition();
+	Vector3 player2Pos = player2->GetWorldPosition();
 	Vector3 player3Pos = player3->GetWorldPosition();
 	Vector3 player4Pos = player4->GetWorldPosition();
+	Vector3 player5Pos = player5->GetWorldPosition();
 
-	Vector3 inPlayerPos = player3Pos;
-	inPlayerPos.x += 2 * MapChipField::kBlockWidth; // player3 の位置から2マス分ずらす
-	inPlayer->SetPosition(inPlayerPos);
+	float distanceToPlayer3 = player5Pos.Distance(player3Pos);
+	float distanceToPlayer4 = player5Pos.Distance(player4Pos);
 
-	// Space キーが押されたら inPlayer を +X 方向に移動させる
-	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
-		moveFlg = true;
+	const float triggerDistance = 4.1f; // 発射をトリガーする距離
+
+	if (distanceToPlayer3 < triggerDistance || distanceToPlayer4 < triggerDistance) {
+		player5->Update2(); // 新しいプレイヤーの更新
+	} else {
+		player5->Update3();
 	}
 
-	if (moveFlg) {
-		inPlayer->MoveRight(); // +X方向への移動
-
-		// 衝突判定
-		if (CheckCollisionRight(inPlayer->GetWorldPosition())) {
-			moveFlg = false; // 衝突したら移動を停止
-		}
-
-		if (inPlayerPos.x >= (player4Pos.x - 2) * (MapChipField::kBlockWidth)) {
-			moveFlg = false;
-		}
+	if ((distanceToPlayer3 < triggerDistance) && Input::GetInstance()->PushKey(DIK_SPACE)) {
+		Vector3 velocity = player5->GetVelocity();
+		velocity.x = MapChipField::kBlockWidth;
+		player5->SetVelocity(velocity);
 	}
 
-	inPlayer->inPlayerUpdate();
+	if ((distanceToPlayer4 < triggerDistance) && Input::GetInstance()->PushKey(DIK_SPACE)) {
+		Vector3 velocity = player5->GetVelocity();
+		velocity.x = -MapChipField::kBlockWidth;
+		player5->SetVelocity(velocity);
+	}
 
 	if (Input::GetInstance()->PushKey(DIK_2)) {
 		finished_ = true;
@@ -166,7 +174,7 @@ void GameScene::Draw() {
 	player2->Draw();
 	player3->Draw();
 	player4->Draw();
-	inPlayer->Draw();
+	player5->Draw(); // 新しいプレイヤーの描画
 
 	for (uint32_t i = 0; i < worldTransformBlocks_.size(); ++i) {
 		for (uint32_t j = 0; j < worldTransformBlocks_[i].size(); ++j) {
@@ -254,23 +262,4 @@ void GameScene::GenerateBlcoks() {
 			}
 		}
 	}
-}
-
-bool GameScene::CheckCollisionRight(const Vector3& playerPos) {
-	// プレイヤーの右側の位置を計算
-	Vector3 rightPos = playerPos;
-	rightPos.x += MapChipField::kBlockWidth; // 1ブロック分右に移動
-
-	// マップチップのインデックスを取得
-	int indexX = static_cast<int>(rightPos.x / MapChipField::kBlockWidth);
-	int indexY = static_cast<int>(rightPos.z / MapChipField::kBlockWidth); // Z軸がY軸として扱われている場合
-
-	// マップチップの範囲外なら衝突なし
-	if (indexX < 0 || static_cast<uint32_t>(indexX) >= mapChipField_->GetNumBlockHorizontal() || indexY < 0 || static_cast<uint32_t>(indexY) >= mapChipField_->GetNumBlockVirtical()) {
-		return false;
-	}
-
-	// 右側のブロックが空でない場合は衝突
-	MapChipType chipType = mapChipField_->GetMapChipTypeByIndex(indexX, indexY);
-	return chipType != MapChipType::kBlank;
 }

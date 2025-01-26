@@ -94,9 +94,9 @@ MapChipType MapChipField::GetMapChipTypeByIndex(uint32_t xIndex, uint32_t yIndex
 }
 
 Vector3 MapChipField::GetMapChipPositionByIndex(int xIndex, int yIndex) {
-    // 必要に応じて負のインデックスを処理
-    float xPosition = kBlockWidth * xIndex;
-    float yPosition = kBlockHeight * (kNumBlockVirtical - 1 - yIndex);
+	// 必要に応じて負のインデックスを処理
+	float xPosition = kBlockWidth * xIndex;
+	float yPosition = kBlockHeight * (kNumBlockVirtical - 1 - yIndex);
 
-    return Vector3(xPosition, yPosition, 0);
+	return Vector3(xPosition, yPosition, 0);
 }

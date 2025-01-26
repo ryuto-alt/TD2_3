@@ -78,35 +78,37 @@ void Player::Update2() {
 
 	worldTransform_.UpdateMatarix();
 }
-void Player::SetPosition(const Vector3& position) {
-	worldTransform_.translation_ = position;
-	worldTransform_.UpdateMatarix();
-}
 
-void Player::MoveRight() {
-	// +X 方向に移動
-	velocity_.x += MapChipField::kBlockWidth / 4; // 移動速度を設定
-}
-void Player::inPlayerUpdate() {
+void Player::Update3() {
+
 	worldTransform_.TransferMatrix();
-
+	velocity_.y = 0;
 	// 衝突情報を初期化
 	CollisionMapInfo collisionMapInfo;
+	// 移動量に速度の値をコピー
 	collisionMapInfo.movement = velocity_;
 	collisionMapInfo.landingFlag = false;
 	collisionMapInfo.wallContactFlag = false;
-
 	// マップ衝突チェック
 	CheckMapCollision(collisionMapInfo);
 
+	JudgmentMove(collisionMapInfo);
+
 	CeilingContact(collisionMapInfo);
+
 	GraundSetting(collisionMapInfo);
 
-	// 移動処理
-	JudgmentMove(collisionMapInfo);
+	SnapToBlockY();
 
 	worldTransform_.UpdateMatarix();
 }
+
+void Player::SetVelocity(const Vector3& velocity) {
+	velocity_ = velocity;
+	worldTransform_.translation_ += velocity_; // 速度を設定した際に即座に位置を更新
+	//worldTransform_.translation_.y = 0; // 速度を設定した際に即座に位置を更新
+}
+
 
 void Player::Draw() { model_->Draw(worldTransform_, *viewProjection_); }
 
@@ -136,8 +138,6 @@ void Player::OnCollision(const Enemy* enemy) {
 	// ジャンプ開始
 	velocity_ += Vector3(0, kJumpAcceleration / 1.0f, 0);
 }
-
-void Player::SetVelocity(const Vector3& velocity) { this->velocity_ = velocity; }
 
 void Player::MovePlayer() {
 	// 右移動操作
@@ -207,6 +207,7 @@ void Player::CheckMapCollision(CollisionMapInfo& info) {
 
 	if (hit) {
 		info.movement = Vector3(0, 0, 0);
+		velocity_ = Vector3(0, 0, 0); // 衝突時に速度をゼロにする
 	}
 }
 
