@@ -76,10 +76,14 @@ void GameScene::Initialize() {
 
 void GameScene::Update() {
 
-	player->Update();
-	player2->Update();
-	player3->Update2();
-	player4->Update2();
+	
+
+	if (!ShotPlayer) {
+		player->Update();
+		player2->Update();
+		player3->Update2();
+		player4->Update2();
+	}
 
 	// player5が他のプレイヤーの近くにいるときに発射される方向を変更する
 	Vector3 playerPos = player->GetWorldPosition();
@@ -94,6 +98,7 @@ void GameScene::Update() {
 	const float triggerDistance = 4.1f; // 発射をトリガーする距離
 
 	if (distanceToPlayer3 < triggerDistance || distanceToPlayer4 < triggerDistance) {
+		ShotPlayer = false;
 		player5->Update2(); // 新しいプレイヤーの更新
 	} else {
 		player5->Update3();
@@ -101,15 +106,24 @@ void GameScene::Update() {
 
 	if ((distanceToPlayer3 < triggerDistance) && Input::GetInstance()->PushKey(DIK_SPACE)) {
 		Vector3 velocity = player5->GetVelocity();
-		velocity.x = MapChipField::kBlockWidth;
+		ShotPlayer = true;
+		velocity.x = MapChipField::kBlockWidth / 2;
 		player5->SetVelocity(velocity);
-	}
+		if (velocity.x == 0) {
+			ShotPlayer = false;
+		}
+	} 
 
 	if ((distanceToPlayer4 < triggerDistance) && Input::GetInstance()->PushKey(DIK_SPACE)) {
 		Vector3 velocity = player5->GetVelocity();
-		velocity.x = -MapChipField::kBlockWidth;
+		ShotPlayer = true;
+		velocity.x = -MapChipField::kBlockWidth / 2;
 		player5->SetVelocity(velocity);
-	}
+
+		if (velocity.x == 0) {
+			ShotPlayer = false;
+		}
+	} 
 
 	if (Input::GetInstance()->PushKey(DIK_2)) {
 		finished_ = true;
