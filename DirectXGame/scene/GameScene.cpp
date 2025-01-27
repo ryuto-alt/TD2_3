@@ -93,7 +93,7 @@ void GameScene::Update() {
 	float distanceToPlayer3 = player5Pos.Distance(player3Pos);
 	float distanceToPlayer4 = player5Pos.Distance(player4Pos);
 
-	const float triggerDistance = 4.1f; // 発射をトリガーする距離
+	const float triggerDistance = 4.3f; // 発射をトリガーする距離
 
 	if (distanceToPlayer3 < triggerDistance || distanceToPlayer4 < triggerDistance) {
 		ShotPlayer = false;
