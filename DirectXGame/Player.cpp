@@ -106,9 +106,8 @@ void Player::Update3() {
 void Player::SetVelocity(const Vector3& velocity) {
 	velocity_ = velocity;
 	worldTransform_.translation_ += velocity_; // 速度を設定した際に即座に位置を更新
-	//worldTransform_.translation_.y = 0; // 速度を設定した際に即座に位置を更新
+	                                           // worldTransform_.translation_.y = 0; // 速度を設定した際に即座に位置を更新
 }
-
 
 void Player::Draw() { model_->Draw(worldTransform_, *viewProjection_); }
 
@@ -137,6 +136,11 @@ void Player::OnCollision(const Enemy* enemy) {
 	(void)enemy;
 	// ジャンプ開始
 	velocity_ += Vector3(0, kJumpAcceleration / 1.0f, 0);
+}
+
+void Player::SetWorldPosition(const Vector3& position) {
+	worldTransform_.translation_ = position;
+	worldTransform_.UpdateMatarix();
 }
 
 void Player::MovePlayer() {

@@ -76,8 +76,6 @@ void GameScene::Initialize() {
 
 void GameScene::Update() {
 
-	
-
 	if (!ShotPlayer) {
 		player->Update();
 		player2->Update();
@@ -112,7 +110,12 @@ void GameScene::Update() {
 		if (velocity.x == 0) {
 			ShotPlayer = false;
 		}
-	} 
+
+		// player5のy座標をplayer3に合わせる
+		Vector3 alignedPos = player5->GetWorldPosition();
+		alignedPos.y = player3Pos.y;
+		player5->SetWorldPosition(alignedPos);
+	}
 
 	if ((distanceToPlayer4 < triggerDistance) && Input::GetInstance()->PushKey(DIK_SPACE)) {
 		Vector3 velocity = player5->GetVelocity();
@@ -123,7 +126,11 @@ void GameScene::Update() {
 		if (velocity.x == 0) {
 			ShotPlayer = false;
 		}
-	} 
+		// player5のy座標をplayer4に合わせる
+		Vector3 alignedPos = player5->GetWorldPosition();
+		alignedPos.y = player4Pos.y;
+		player5->SetWorldPosition(alignedPos);
+	}
 
 	if (Input::GetInstance()->PushKey(DIK_2)) {
 		finished_ = true;
