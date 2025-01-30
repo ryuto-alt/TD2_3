@@ -100,4 +100,9 @@ private: // メンバ変数
 	Skydome* skydome_ = nullptr;
 	Model* modelSkydome_ = nullptr;
 	// std::vector<std::vector<WorldTransform*>> worldTransformBlocks_;
+	float ChangeDelay = 10.0f;
 };
+
+
+
+

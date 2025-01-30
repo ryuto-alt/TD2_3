@@ -145,16 +145,16 @@ void Player::SetWorldPosition(const Vector3& position) {
 
 void Player::MovePlayer() {
 	// 右移動操作
-	if (Input::GetInstance()->PushKey(DIK_D) && worldTransform_.translation_.x < 26) {
-		velocity_.x = std::min(MapChipField::kBlockWidth / 4, MapChipField::kBlockWidth - 0.1f);
+	if (Input::GetInstance()->PushKey(DIK_D) && worldTransform_.translation_.x < 28) {
+		velocity_.x = MapChipField::kBlockWidth / 4;
 		lrdDirection_ = LRDirection::kRight;
 	}
 	// 左移動操作
-	else if (Input::GetInstance()->PushKey(DIK_A) && worldTransform_.translation_.x > 4) {
-		velocity_.x = std::max(-MapChipField::kBlockWidth / 4, -(MapChipField::kBlockWidth - 0.1f));
+	else if (Input::GetInstance()->PushKey(DIK_A) && worldTransform_.translation_.x > 2) {
+		velocity_.x = -MapChipField::kBlockWidth / 4;
 		lrdDirection_ = LRDirection::kLeft;
 	}
-	// 停止処理
+	// どちらのキーも押されていない場合
 	else {
 		velocity_.x = 0;
 		SnapToBlockX();
@@ -163,12 +163,12 @@ void Player::MovePlayer() {
 
 void Player::MovePlayer2() {
 	// 上移動操作
-	if (Input::GetInstance()->PushKey(DIK_W) && worldTransform_.translation_.y < 34) {
+	if (Input::GetInstance()->PushKey(DIK_W) && worldTransform_.translation_.y < 36) {
 		// 移動
 		velocity_.y = MapChipField::kBlockHeight / 4;
 	}
 	// 下移動操作
-	else if (Input::GetInstance()->PushKey(DIK_S) && worldTransform_.translation_.y > 20) {
+	else if (Input::GetInstance()->PushKey(DIK_S) && worldTransform_.translation_.y > 18) {
 		// 移動
 		velocity_.y = -MapChipField::kBlockHeight / 4;
 	}
@@ -181,24 +181,12 @@ void Player::MovePlayer2() {
 }
 
 void Player::SnapToBlockX() {
-	if (!snapEnabled_)
-		return; // スナップ無効なら何もしない
-
 	// X座標をブロック幅にスナップ
 	float snappedX = round(worldTransform_.translation_.x / MapChipField::kBlockWidth) * MapChipField::kBlockWidth;
-	// 壁の内側に入らないよう、微調整を追加
-	if (velocity_.x > 0) {
-		snappedX -= 0.01f; // 右向き移動時
-	} else if (velocity_.x < 0) {
-		snappedX += 0.01f; // 左向き移動時
-	}
 	worldTransform_.translation_.x = snappedX;
 }
 
 void Player::SnapToBlockY() {
-	if (!snapEnabled_)
-		return; // スナップ無効なら何もしない
-
 	// Y座標をブロック高さにスナップ
 	float snappedY = round(worldTransform_.translation_.y / MapChipField::kBlockHeight) * MapChipField::kBlockHeight;
 	worldTransform_.translation_.y = snappedY;
@@ -213,22 +201,22 @@ void Player::CeilingContact(const CollisionMapInfo& info) {
 }
 
 void Player::CheckMapCollision(CollisionMapInfo& info) {
-    bool hit = false;
+	bool hit = false;
 
-    // 上方向の衝突判定
-    CheckMapCollisionUp(info, hit);
-    // 下方向の衝突判定
-    CheckMapCollisionDown(info, hit);
-    // 左方向の衝突判定
-    CheckMapCollisionLeft(info, hit);
-    // 右方向の衝突判定
-    CheckMapCollisionRight(info, hit);
+	// 上方向の衝突判定
+	CheckMapCollisionUp(info, hit);
+	// 下方向の衝突判定
+	CheckMapCollisionDown(info, hit);
+	// 左方向の衝突判定
+	CheckMapCollisionLeft(info, hit);
+	// 右方向の衝突判定
+	CheckMapCollisionRight(info, hit);
 
-    // 衝突時の移動量と速度をゼロに
-    if (hit) {
-        info.movement = Vector3(0, 0, 0);
-        velocity_ = Vector3(0, 0, 0);
-    }
+	// 衝突時の移動量と速度をゼロに
+	if (hit) {
+		info.movement = Vector3(0, 0, 0);
+		velocity_ = Vector3(0, 0, 0);
+	}
 }
 
 void Player::CheckMapCollisionUp(CollisionMapInfo& info, bool& hit) {
@@ -419,8 +407,29 @@ void Player::GraundSetting(const CollisionMapInfo& info) {
 void Player::UpdateCenter() {
 	worldTransform_.TransferMatrix();
 
+	// X方向の速度はリセットせずそのまま
+	velocity_.x = 0;
+	velocity_.y = velocity_.y;
+
+	CollisionMapInfo collisionMapInfo;
+	collisionMapInfo.movement = velocity_;
+	collisionMapInfo.landingFlag = false;
+	collisionMapInfo.wallContactFlag = false;
+
+	CheckMapCollision(collisionMapInfo);
+	JudgmentMove(collisionMapInfo);
+	CeilingContact(collisionMapInfo);
+	GraundSetting(collisionMapInfo);
+
+	worldTransform_.UpdateMatarix();
+}
+
+void Player::UpdateCenter2() {
+	worldTransform_.TransferMatrix();
+
+	// X方向の速度はリセットせずそのまま
 	velocity_.x = velocity_.x;
-	velocity_.y  = velocity_.y;
+	velocity_.y = 0;
 
 	CollisionMapInfo collisionMapInfo;
 	collisionMapInfo.movement = velocity_;

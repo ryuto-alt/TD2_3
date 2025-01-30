@@ -83,11 +83,12 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 
 	// プレイヤー全体を常に更新
-	playerBottom->Update();
-	playerTop->Update();
-	playerLeft->Update2();
-	playerRight->Update2();
-	playerCenter->UpdateCenter();
+	if (!ShotPlayer) {
+		playerBottom->Update();
+		playerTop->Update();
+		playerLeft->Update2();
+		playerRight->Update2();
+	}
 
 	// 各プレイヤーのワールド座標を取得
 	Vector3 playerBottomPos = playerBottom->GetWorldPosition();
@@ -96,31 +97,23 @@ void GameScene::Update() {
 	Vector3 playerRightPos = playerRight->GetWorldPosition();
 	Vector3 playerCenterPos = playerCenter->GetWorldPosition();
 
-	// **前回の移動方向を記録**
-	static LRDirection previousDirection = playerCenter->GetDirection();
-
-	// **左から右に移動したら ShotPlayer を false にする**
-	if (previousDirection == LRDirection::kLeft && playerCenter->GetDirection() == LRDirection::kRight) {
-		ShotPlayer = false;
-	}
-
-	// **現在の方向を前回の方向として記録**
-	previousDirection = playerCenter->GetDirection();
-
 	// 発射処理に使用する距離を計算
 	float distanceToPlayerLeft = playerCenterPos.Distance(playerLeftPos);
 	float distanceToPlayerRight = playerCenterPos.Distance(playerRightPos);
 	float distanceToPlayerTop = playerCenterPos.Distance(playerTopPos);
 	float distanceToPlayerBottom = playerCenterPos.Distance(playerBottomPos);
 
-	// Qキーで追従方向を切り替え (左右 ↔ 上下)
-	static bool followHorizontal = true;
-	if (Input::GetInstance()->TriggerKey(DIK_Q)) {
-		followHorizontal = !followHorizontal;
-	}
-
 	// 発射をトリガーする距離
 	const float triggerDistance = 4.3f;
+
+	// Qキーで追従方向を切り替え (左右 ↔ 上下)
+	static bool followHorizontal = true;
+
+	if (!ShotPlayer) {
+		if (Input::GetInstance()->TriggerKey(DIK_Q)) {
+			followHorizontal = !followHorizontal;
+		}
+	}
 
 	// 発射中ではない場合に追従処理を実行
 	if (!ShotPlayer) {
@@ -142,11 +135,37 @@ void GameScene::Update() {
 	}
 
 	// 発射処理 (元のコード)
-	if (distanceToPlayerLeft < triggerDistance || distanceToPlayerRight < triggerDistance || distanceToPlayerTop < triggerDistance || distanceToPlayerBottom < triggerDistance) {
-		ShotPlayer = false;
+	if (followHorizontal) {
+
+		playerCenter->UpdateCenter2();
+	}
+
+	if (!followHorizontal) {
+
 		playerCenter->UpdateCenter();
-	} else {
-		playerCenter->UpdateCenter();
+	}
+
+	ChangeDelay--;
+
+	// 発射処理 (元のコード)
+	if (followHorizontal) {
+		if (ChangeDelay < 0) {
+			if (ShotPlayer) {
+				if (distanceToPlayerLeft < triggerDistance || distanceToPlayerRight < triggerDistance) {
+					ShotPlayer = false;
+				}
+			}
+		}
+	}
+
+	if (ChangeDelay < 0) {
+		if (!followHorizontal) {
+			if (ShotPlayer) {
+				if (distanceToPlayerTop < triggerDistance || distanceToPlayerBottom < triggerDistance) {
+					ShotPlayer = false;
+				}
+			}
+		}
 	}
 
 	// **横方向の発射処理**
@@ -156,10 +175,7 @@ void GameScene::Update() {
 		velocity.x = MapChipField::kBlockWidth / 2;
 		playerCenter->SetVelocity(velocity);
 
-		// 停止していたら ShotPlayer を false にする
-		if (velocity.x == 0) {
-			ShotPlayer = false;
-		}
+		ChangeDelay = 10;
 
 		// playerCenterのy座標をplayerLeftに合わせる
 		Vector3 alignedPos = playerCenter->GetWorldPosition();
@@ -173,9 +189,7 @@ void GameScene::Update() {
 		velocity.x = -MapChipField::kBlockWidth / 2;
 		playerCenter->SetVelocity(velocity);
 
-		if (velocity.x == 0) {
-			ShotPlayer = false;
-		}
+		ChangeDelay = 10;
 
 		// playerCenterのy座標をplayerRightに合わせる
 		Vector3 alignedPos = playerCenter->GetWorldPosition();
@@ -190,9 +204,7 @@ void GameScene::Update() {
 		velocity.y = -MapChipField::kBlockHeight / 2;
 		playerCenter->SetVelocity(velocity);
 
-		if (std::abs(velocity.y) < 0.01f) {
-			ShotPlayer = false;
-		}
+		ChangeDelay = 10;
 
 		// playerCenterのx座標をplayerTopに合わせる
 		Vector3 alignedPos = playerCenter->GetWorldPosition();
@@ -206,9 +218,7 @@ void GameScene::Update() {
 		velocity.y = MapChipField::kBlockHeight / 2;
 		playerCenter->SetVelocity(velocity);
 
-		if (std::abs(velocity.y) < 0.01f) {
-			ShotPlayer = false;
-		}
+		ChangeDelay = 10;
 
 		// playerCenterのx座標をplayerBottomに合わせる
 		Vector3 alignedPos = playerCenter->GetWorldPosition();
@@ -241,6 +251,7 @@ void GameScene::Update() {
 	ImGui::Begin("Scene");
 	ImGui::End();
 }
+
 
 void GameScene::Draw() {
 
