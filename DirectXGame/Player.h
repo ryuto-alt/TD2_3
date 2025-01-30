@@ -51,6 +51,10 @@ public:
 	void CheckMapCollisionLeft(CollisionMapInfo& info, bool& hit);
 	void CheckMapCollisionRight(CollisionMapInfo& info, bool& hit);
 
+	void CheckMapCollisionLeftSlime(CollisionMapInfo& info, bool& hit);
+
+	void CheckMapCollisionRightSlime(CollisionMapInfo& info, bool& hit);
+
 	void JudgmentMove(const CollisionMapInfo& info);
 	void CeilingContact(const CollisionMapInfo& info);
 	void GraundSetting(const CollisionMapInfo& info);

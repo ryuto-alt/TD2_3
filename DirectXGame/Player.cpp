@@ -211,7 +211,8 @@ void Player::CheckMapCollision(CollisionMapInfo& info) {
 	CheckMapCollisionLeft(info, hit);
 	// 右方向の衝突判定
 	CheckMapCollisionRight(info, hit);
-
+	CheckMapCollisionLeftSlime(info, hit);
+	CheckMapCollisionRightSlime(info, hit);
 	// 衝突時の移動量と速度をゼロに
 	if (hit) {
 		info.movement = Vector3(0, 0, 0);
@@ -353,6 +354,66 @@ void Player::CheckMapCollisionLeft(CollisionMapInfo& info, bool& hit) {
 	}
 }
 
+void Player::CheckMapCollisionLeftSlime(CollisionMapInfo& info, bool& hit) {
+	std::array<Vector3, kNumCorner> positionsNew;
+	for (uint32_t i = 0; i < positionsNew.size(); ++i) {
+		positionsNew[i] = CornerPosition(worldTransform_.translation_ + Vector3(info.movement.x, 0, 0), static_cast<Corner>(i));
+	}
+
+	MapChipType mapChipType;
+
+	MapChipField::IndexSet indexSet;
+	indexSet = mapChipField_->GetMapChipIndexSetByPosition(positionsNew[kRightBottom]);
+	mapChipType = mapChipField_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex);
+	if (mapChipType == MapChipType::slime) {
+		hit = true;
+	}
+
+	indexSet = mapChipField_->GetMapChipIndexSetByPosition(positionsNew[kRightTop]);
+	mapChipType = mapChipField_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex);
+	if (mapChipType == MapChipType::slime) {
+		hit = true;
+	}
+
+	if (hit) {
+		MapChipField::Rect rect = mapChipField_->GetRectByIndex(indexSet.xIndex, indexSet.yIndex);
+		info.movement.x = std::min(0.0f, (rect.left - worldTransform_.translation_.x) + (kWidth / 2.0f + kBlank));
+
+		// Y座標を1ブロック分落とす
+		worldTransform_.translation_.y -= MapChipField::kBlockHeight;
+	}
+}
+
+void Player::CheckMapCollisionRightSlime(CollisionMapInfo& info, bool& hit) {
+	std::array<Vector3, kNumCorner> positionsNew;
+	for (uint32_t i = 0; i < positionsNew.size(); ++i) {
+		positionsNew[i] = CornerPosition(worldTransform_.translation_ + Vector3(info.movement.x, 0, 0), static_cast<Corner>(i));
+	}
+
+	MapChipType mapChipType;
+
+	MapChipField::IndexSet indexSet;
+	indexSet = mapChipField_->GetMapChipIndexSetByPosition(positionsNew[kLeftBottom]);
+	mapChipType = mapChipField_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex);
+	if (mapChipType == MapChipType::slime) {
+		hit = true;
+	}
+
+	indexSet = mapChipField_->GetMapChipIndexSetByPosition(positionsNew[kLeftTop]);
+	mapChipType = mapChipField_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex);
+	if (mapChipType == MapChipType::slime) {
+		hit = true;
+	}
+
+	if (hit) {
+		MapChipField::Rect rect = mapChipField_->GetRectByIndex(indexSet.xIndex, indexSet.yIndex);
+		info.movement.x = std::max(1.0f, (rect.right - worldTransform_.translation_.x) - (kWidth / 2.0f));
+
+		// Y座標を1ブロック分落とす
+		worldTransform_.translation_.y -= MapChipField::kBlockHeight;
+	}
+}
+
 void Player::GraundSetting(const CollisionMapInfo& info) {
 	// 接地状態の切り替え処理
 	if (onGround_) {
@@ -406,6 +467,7 @@ void Player::GraundSetting(const CollisionMapInfo& info) {
 
 void Player::UpdateCenter() {
 	worldTransform_.TransferMatrix();
+
 
 	// X方向の速度はリセットせずそのまま
 	velocity_.x = 0;
