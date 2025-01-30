@@ -66,6 +66,12 @@ void GameScene::Initialize() {
 	playerRight->Initialize(modelPlayer_, &viewProjection_, playerPosition4);
 	playerCenter->Initialize(modelPlayer_, &viewProjection_, playerPosition5); // 新しいプレイヤーの初期化
 
+	playerBottom->SetSnapEnabled(true);
+	playerTop->SetSnapEnabled(true);
+	playerLeft->SetSnapEnabled(true);
+	playerRight->SetSnapEnabled(true);
+	playerCenter->SetSnapEnabled(false); // playerCenter のスナップを無効化
+
 	// Camera
 	Camera_ = new Camera();
 	Camera_->Initialize(railcameraPos, railcameraRad);

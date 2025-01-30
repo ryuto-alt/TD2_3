@@ -66,6 +66,9 @@ public:
 		SnapToBlockY();
 	} // 修正
 
+	void SetSnapEnabled(bool enabled) { snapEnabled_ = enabled; }
+	bool IsSnapEnabled() const { return snapEnabled_; }
+
 	void SetWorldPosition(const Vector3& position);
 
 	LRDirection GetDirection() const { return lrdDirection_; }
@@ -109,5 +112,5 @@ private:
 	Vector3 worldPos_;
 	float radius_;
 
-
+	 bool snapEnabled_ = true; // デフォルトではスナップ処理を有効にする
 };

@@ -49,7 +49,6 @@ public: // メンバ関数
 	void Draw();
 
 	void GenerateBlcoks();
-
 	bool IsFinished() const { return finished_; }
 
 private: // メンバ変数
