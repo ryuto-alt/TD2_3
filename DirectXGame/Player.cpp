@@ -14,6 +14,8 @@
 #include <mymath.h>
 #include <numbers>
 
+Player::~Player() { delete mapChipField_; }
+
 void Player::Initialize(Model* model, ViewProjection* viewProjection, const Vector3& position) {
 	assert(model);
 

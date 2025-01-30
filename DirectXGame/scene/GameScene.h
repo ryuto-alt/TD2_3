@@ -100,5 +100,5 @@ private: // メンバ変数
 	// SkyDome
 	Skydome* skydome_ = nullptr;
 	Model* modelSkydome_ = nullptr;
-	// std::vector<std::vector<WorldTransform*>> worldTransformBlocks_;
+	bool followHorizontal = true;
 };

@@ -10,7 +10,7 @@ GameScene::~GameScene() {
 	delete player2;
 	delete player3;
 	delete player4;
-	delete player5; // 新しいプレイヤーの削除
+	delete player5;
 	delete skydome_;
 
 	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
@@ -74,8 +74,9 @@ void GameScene::Initialize() {
 	debugCamera_ = new DebugCamera(1280, 720);
 }
 
-void GameScene::Update() {
 
+
+void GameScene::Update() {
 	if (!ShotPlayer) {
 		player->Update();
 		player2->Update();
@@ -83,9 +84,6 @@ void GameScene::Update() {
 		player4->Update2();
 	}
 
-	// player5が他のプレイヤーの近くにいるときに発射される方向を変更する
-	Vector3 playerPos = player->GetWorldPosition();
-	Vector3 player2Pos = player2->GetWorldPosition();
 	Vector3 player3Pos = player3->GetWorldPosition();
 	Vector3 player4Pos = player4->GetWorldPosition();
 	Vector3 player5Pos = player5->GetWorldPosition();
@@ -93,43 +91,40 @@ void GameScene::Update() {
 	float distanceToPlayer3 = player5Pos.Distance(player3Pos);
 	float distanceToPlayer4 = player5Pos.Distance(player4Pos);
 
-	const float triggerDistance = 4.3f; // 発射をトリガーする距離
+	const float triggerDistance = 5.3f; // 発射をトリガーする距離
+	const float moveSpeed = 0.5f;       // 追尾速度
 
 	if (distanceToPlayer3 < triggerDistance || distanceToPlayer4 < triggerDistance) {
 		ShotPlayer = false;
-		player5->Update2(); // 新しいプレイヤーの更新
+
+		// 近い方のプレイヤーの位置を取得
+		Vector3 targetPos = (distanceToPlayer3 < distanceToPlayer4) ? player3Pos : player4Pos;
+
+		// 横に2マスずれた位置を計算
+		if (targetPos == player3Pos) {
+			targetPos.x -= MapChipField::kBlockWidth * 2; // player3の左に2マス
+		} else {
+			targetPos.x += MapChipField::kBlockWidth * 2; // player4の右に2マス
+		}
+
+		// 縦方向の追尾
+		Vector3 direction = targetPos - player5Pos;
+		direction.x = 0; // 横方向の移動を無効にする
+		direction.Normalize();
+
+		// 速度を設定
+		Vector3 velocity = direction * moveSpeed;
+		player5Pos += velocity;
+		player5->SetWorldPosition(player5Pos);
 	} else {
-		player5->Update3();
+		player5->Update3(); // いつもどおりの処理
 	}
 
-	if ((distanceToPlayer3 < triggerDistance) && Input::GetInstance()->PushKey(DIK_SPACE)) {
+	if ((distanceToPlayer3 < triggerDistance || distanceToPlayer4 < triggerDistance) && Input::GetInstance()->PushKey(DIK_SPACE)) {
 		Vector3 velocity = player5->GetVelocity();
 		ShotPlayer = true;
-		velocity.x = MapChipField::kBlockWidth / 2;
+		velocity.x = (distanceToPlayer3 < distanceToPlayer4) ? MapChipField::kBlockWidth / 2 : -MapChipField::kBlockWidth / 2;
 		player5->SetVelocity(velocity);
-		if (velocity.x == 0) {
-			ShotPlayer = false;
-		}
-
-		// player5のy座標をplayer3に合わせる
-		Vector3 alignedPos = player5->GetWorldPosition();
-		alignedPos.y = player3Pos.y;
-		player5->SetWorldPosition(alignedPos);
-	}
-
-	if ((distanceToPlayer4 < triggerDistance) && Input::GetInstance()->PushKey(DIK_SPACE)) {
-		Vector3 velocity = player5->GetVelocity();
-		ShotPlayer = true;
-		velocity.x = -MapChipField::kBlockWidth / 2;
-		player5->SetVelocity(velocity);
-
-		if (velocity.x == 0) {
-			ShotPlayer = false;
-		}
-		// player5のy座標をplayer4に合わせる
-		Vector3 alignedPos = player5->GetWorldPosition();
-		alignedPos.y = player4Pos.y;
-		player5->SetWorldPosition(alignedPos);
 	}
 
 	if (Input::GetInstance()->PushKey(DIK_2)) {
@@ -138,13 +133,12 @@ void GameScene::Update() {
 
 #pragma region ブロック描画
 	// 縦横ブロック更新
-	for (std::vector<WorldTransform*> worldTransformBlockTate : worldTransformBlocks_) {
+	for (std::vector<WorldTransform*>& worldTransformBlockTate : worldTransformBlocks_) {
 		for (WorldTransform* worldTransformBlockYoko : worldTransformBlockTate) {
 			if (!worldTransformBlockYoko)
 				continue;
 
 			// アフィン変換行列の作成
-			//(MakeAffineMatrix：自分で作った数学系関数)
 			worldTransformBlockYoko->matWorld_ = MakeAffineMatrix(worldTransformBlockYoko->scale_, worldTransformBlockYoko->rotation_, worldTransformBlockYoko->translation_);
 
 			// 定数バッファに転送
@@ -158,10 +152,12 @@ void GameScene::Update() {
 	viewProjection_.TransferMatrix();
 
 	ImGui::Begin("Scene");
-	// ImGui::Text("playerPos3: %f",playerPosition3.y ); // シーン名を表示
-	// ImGui::Text("playerPos4: %f",playerPosition4.y ); // シーン名を表示
 	ImGui::End();
 }
+
+
+
+
 
 void GameScene::Draw() {
 

@@ -26,6 +26,7 @@ class Player {
 public:
 	// 初期化
 	void Initialize(Model* model, ViewProjection* viewProjection, const Vector3& pos);
+    ~Player();
 	// 更新
 	void Update();
 	void Update2();
