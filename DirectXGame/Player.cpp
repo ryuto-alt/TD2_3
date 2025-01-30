@@ -146,17 +146,16 @@ void Player::SetWorldPosition(const Vector3& position) {
 void Player::MovePlayer() {
 	// 右移動操作
 	if (Input::GetInstance()->PushKey(DIK_D) && worldTransform_.translation_.x < 28) {
-		// 移動
 		velocity_.x = MapChipField::kBlockWidth / 4;
+		lrdDirection_ = LRDirection::kRight;
 	}
 	// 左移動操作
 	else if (Input::GetInstance()->PushKey(DIK_A) && worldTransform_.translation_.x > 2) {
-		// 移動
 		velocity_.x = -MapChipField::kBlockWidth / 4;
+		lrdDirection_ = LRDirection::kLeft;
 	}
 	// どちらのキーも押されていない場合
 	else {
-		// 停止
 		velocity_.x = 0;
 		SnapToBlockX();
 	}
@@ -202,17 +201,22 @@ void Player::CeilingContact(const CollisionMapInfo& info) {
 }
 
 void Player::CheckMapCollision(CollisionMapInfo& info) {
-	bool hit = false;
+    bool hit = false;
 
-	CheckMapCollisionUp(info, hit);
-	CheckMapCollisionDown(info, hit);
-	CheckMapCollisionRight(info, hit);
-	CheckMapCollisionLeft(info, hit);
+    // 上方向の衝突判定
+    CheckMapCollisionUp(info, hit);
+    // 下方向の衝突判定
+    CheckMapCollisionDown(info, hit);
+    // 左方向の衝突判定
+    CheckMapCollisionLeft(info, hit);
+    // 右方向の衝突判定
+    CheckMapCollisionRight(info, hit);
 
-	if (hit) {
-		info.movement = Vector3(0, 0, 0);
-		velocity_ = Vector3(0, 0, 0); // 衝突時に速度をゼロにする
-	}
+    // 衝突時の移動量と速度をゼロに
+    if (hit) {
+        info.movement = Vector3(0, 0, 0);
+        velocity_ = Vector3(0, 0, 0);
+    }
 }
 
 void Player::CheckMapCollisionUp(CollisionMapInfo& info, bool& hit) {
@@ -405,11 +409,7 @@ void Player::UpdateCenter() {
 
 	// X方向の速度はリセットせずそのまま
 	velocity_.x = velocity_.x;
-
-	// Y方向の動きを適切に制御
-	if (velocity_.y != 0) {
-		velocity_.y += kGravityAcceleration;
-	}
+	velocity_.y  = velocity_.y;
 
 	CollisionMapInfo collisionMapInfo;
 	collisionMapInfo.movement = velocity_;

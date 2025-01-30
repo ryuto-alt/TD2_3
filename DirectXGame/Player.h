@@ -68,6 +68,8 @@ public:
 
 	void SetWorldPosition(const Vector3& position);
 
+	LRDirection GetDirection() const { return lrdDirection_; }
+
 	static inline const float kAcceleration = 0.1f;
 	static inline const float kAttenuation = 0.2f;
 	static inline const float kJumpAcceleration = 0.5f;
@@ -106,4 +108,6 @@ private:
 
 	Vector3 worldPos_;
 	float radius_;
+
+
 };
