@@ -83,11 +83,11 @@ private: // メンバ変数
 
 	Model* modelPlayer_ = nullptr;
 	std::list<Player*> players_;
-	Player* player = new Player();
-	Player* player2 = new Player();
-	Player* player3 = new Player();
-	Player* player4 = new Player();
-	Player* player5 = new Player();
+	Player* playerBottom = new Player();
+	Player* playerTop = new Player();
+	Player* playerLeft = new Player();
+	Player* playerRight = new Player();
+	Player* playerCenter = new Player();
 
 	Camera* Camera_ = nullptr;
 

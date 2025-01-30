@@ -6,11 +6,11 @@
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
-	delete player;
-	delete player2;
-	delete player3;
-	delete player4;
-	delete player5; // 新しいプレイヤーの削除
+	delete playerBottom;
+	delete playerTop;
+	delete playerLeft;
+	delete playerRight;
+	delete playerCenter; // 新しいプレイヤーの削除
 	delete skydome_;
 
 	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
@@ -50,21 +50,21 @@ void GameScene::Initialize() {
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 	skydome_->Initialize(modelSkydome_, &viewProjection_);
 
-	player = new Player();
-	player2 = new Player();
-	player3 = new Player();
-	player4 = new Player();
-	player5 = new Player(); // 新しいプレイヤーの初期化
+	playerBottom = new Player();
+	playerTop = new Player();
+	playerLeft = new Player();
+	playerRight = new Player();
+	playerCenter = new Player(); // 新しいプレイヤーの初期化
 	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(8, 12);
 	Vector3 playerPosition2 = mapChipField_->GetMapChipPositionByIndex(8, -1);
 	Vector3 playerPosition3 = mapChipField_->GetMapChipPositionByIndex(-1, 5);
 	Vector3 playerPosition4 = mapChipField_->GetMapChipPositionByIndex(16, 5);
 	Vector3 playerPosition5 = mapChipField_->GetMapChipPositionByIndex(14, 5); // 新しいプレイヤーの座標
-	player->Initialize(modelPlayer_, &viewProjection_, playerPosition);
-	player2->Initialize(modelPlayer_, &viewProjection_, playerPosition2);
-	player3->Initialize(modelPlayer_, &viewProjection_, playerPosition3);
-	player4->Initialize(modelPlayer_, &viewProjection_, playerPosition4);
-	player5->Initialize(modelPlayer_, &viewProjection_, playerPosition5); // 新しいプレイヤーの初期化
+	playerBottom->Initialize(modelPlayer_, &viewProjection_, playerPosition);
+	playerTop->Initialize(modelPlayer_, &viewProjection_, playerPosition2);
+	playerLeft->Initialize(modelPlayer_, &viewProjection_, playerPosition3);
+	playerRight->Initialize(modelPlayer_, &viewProjection_, playerPosition4);
+	playerCenter->Initialize(modelPlayer_, &viewProjection_, playerPosition5); // 新しいプレイヤーの初期化
 
 	// Camera
 	Camera_ = new Camera();
@@ -77,59 +77,59 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 
 	if (!ShotPlayer) {
-		player->Update();
-		player2->Update();
-		player3->Update2();
-		player4->Update2();
+		playerBottom->Update();
+		playerTop->Update();
+		playerLeft->Update2();
+		playerRight->Update2();
 	}
 
-	// player5が他のプレイヤーの近くにいるときに発射される方向を変更する
-	Vector3 playerPos = player->GetWorldPosition();
-	Vector3 player2Pos = player2->GetWorldPosition();
-	Vector3 player3Pos = player3->GetWorldPosition();
-	Vector3 player4Pos = player4->GetWorldPosition();
-	Vector3 player5Pos = player5->GetWorldPosition();
+	// playerCenterが他のプレイヤーの近くにいるときに発射される方向を変更する
+	Vector3 playerPos = playerBottom->GetWorldPosition();
+	Vector3 playerTopPos = playerTop->GetWorldPosition();
+	Vector3 playerLeftPos = playerLeft->GetWorldPosition();
+	Vector3 playerRightPos = playerRight->GetWorldPosition();
+	Vector3 playerCenterPos = playerCenter->GetWorldPosition();
 
-	float distanceToPlayer3 = player5Pos.Distance(player3Pos);
-	float distanceToPlayer4 = player5Pos.Distance(player4Pos);
+	float distanceToplayerLeft = playerCenterPos.Distance(playerLeftPos);
+	float distanceToplayerRight = playerCenterPos.Distance(playerRightPos);
 
 	const float triggerDistance = 4.3f; // 発射をトリガーする距離
 
-	if (distanceToPlayer3 < triggerDistance || distanceToPlayer4 < triggerDistance) {
+	if (distanceToplayerLeft < triggerDistance || distanceToplayerRight < triggerDistance) {
 		ShotPlayer = false;
-		player5->Update2(); // 新しいプレイヤーの更新
+		playerCenter->Update2(); // 新しいプレイヤーの更新
 	} else {
-		player5->Update3();
+		playerCenter->Update3();
 	}
 
-	if ((distanceToPlayer3 < triggerDistance) && Input::GetInstance()->PushKey(DIK_SPACE)) {
-		Vector3 velocity = player5->GetVelocity();
+	if ((distanceToplayerLeft < triggerDistance) && Input::GetInstance()->PushKey(DIK_SPACE)) {
+		Vector3 velocity = playerCenter->GetVelocity();
 		ShotPlayer = true;
 		velocity.x = MapChipField::kBlockWidth / 2;
-		player5->SetVelocity(velocity);
+		playerCenter->SetVelocity(velocity);
 		if (velocity.x == 0) {
 			ShotPlayer = false;
 		}
 
-		// player5のy座標をplayer3に合わせる
-		Vector3 alignedPos = player5->GetWorldPosition();
-		alignedPos.y = player3Pos.y;
-		player5->SetWorldPosition(alignedPos);
+		// playerCenterのy座標をplayerLeftに合わせる
+		Vector3 alignedPos = playerCenter->GetWorldPosition();
+		alignedPos.y = playerLeftPos.y;
+		playerCenter->SetWorldPosition(alignedPos);
 	}
 
-	if ((distanceToPlayer4 < triggerDistance) && Input::GetInstance()->PushKey(DIK_SPACE)) {
-		Vector3 velocity = player5->GetVelocity();
+	if ((distanceToplayerRight < triggerDistance) && Input::GetInstance()->PushKey(DIK_SPACE)) {
+		Vector3 velocity = playerCenter->GetVelocity();
 		ShotPlayer = true;
 		velocity.x = -MapChipField::kBlockWidth / 2;
-		player5->SetVelocity(velocity);
+		playerCenter->SetVelocity(velocity);
 
 		if (velocity.x == 0) {
 			ShotPlayer = false;
 		}
-		// player5のy座標をplayer4に合わせる
-		Vector3 alignedPos = player5->GetWorldPosition();
-		alignedPos.y = player4Pos.y;
-		player5->SetWorldPosition(alignedPos);
+		// playerCenterのy座標をplayerRightに合わせる
+		Vector3 alignedPos = playerCenter->GetWorldPosition();
+		alignedPos.y = playerRightPos.y;
+		playerCenter->SetWorldPosition(alignedPos);
 	}
 
 	if (Input::GetInstance()->PushKey(DIK_2)) {
@@ -191,11 +191,11 @@ void GameScene::Draw() {
 	/// </summary>
 	// 縦横ブロック描画
 
-	player->Draw();
-	player2->Draw();
-	player3->Draw();
-	player4->Draw();
-	player5->Draw(); // 新しいプレイヤーの描画
+	playerBottom->Draw();
+	playerTop->Draw();
+	playerLeft->Draw();
+	playerRight->Draw();
+	playerCenter->Draw(); // 新しいプレイヤーの描画
 
 	for (uint32_t i = 0; i < worldTransformBlocks_.size(); ++i) {
 		for (uint32_t j = 0; j < worldTransformBlocks_[i].size(); ++j) {
