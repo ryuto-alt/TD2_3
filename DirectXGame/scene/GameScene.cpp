@@ -89,30 +89,33 @@ void GameScene::Update() {
 	Vector3 playerRightPos = playerRight->GetWorldPosition();
 	Vector3 playerCenterPos = playerCenter->GetWorldPosition();
 
+	// 発射処理に使用する距離を計算
+	float distanceToPlayerLeft = playerCenterPos.Distance(playerLeftPos);
+	float distanceToPlayerRight = playerCenterPos.Distance(playerRightPos);
+	float distanceToPlayerTop = playerCenterPos.Distance(playerTopPos);
+	float distanceToPlayerBottom = playerCenterPos.Distance(playerBottomPos);
+
 	// Qキーで追従方向を切り替え (左右 ↔ 上下)
 	static bool followHorizontal = true;
-	if (input_->TriggerKey(DIK_Q)) {
+	if (Input::GetInstance()->TriggerKey(DIK_Q)) {
 		followHorizontal = !followHorizontal;
 	}
+
+	// 発射をトリガーする距離
+	const float triggerDistance = 4.3f;
 
 	// 発射中ではない場合に追従処理を実行
 	if (!ShotPlayer) {
 		if (followHorizontal) {
 			// 左右方向で「2ブロック先」に配置
-			float distLeft = playerCenterPos.Distance(playerLeftPos);
-			float distRight = playerCenterPos.Distance(playerRightPos);
-
-			if (distLeft < distRight) {
+			if (distanceToPlayerLeft < distanceToPlayerRight) {
 				playerCenter->SetWorldPosition(Vector3(playerLeftPos.x + 2 * MapChipField::kBlockWidth, playerLeftPos.y, playerLeftPos.z));
 			} else {
 				playerCenter->SetWorldPosition(Vector3(playerRightPos.x - 2 * MapChipField::kBlockWidth, playerRightPos.y, playerRightPos.z));
 			}
 		} else {
 			// 上下方向で「2ブロック先」に配置
-			float distTop = playerCenterPos.Distance(playerTopPos);
-			float distBottom = playerCenterPos.Distance(playerBottomPos);
-
-			if (distTop < distBottom) {
+			if (distanceToPlayerTop < distanceToPlayerBottom) {
 				playerCenter->SetWorldPosition(Vector3(playerTopPos.x, playerTopPos.y - 2 * MapChipField::kBlockHeight, playerTopPos.z));
 			} else {
 				playerCenter->SetWorldPosition(Vector3(playerBottomPos.x, playerBottomPos.y + 2 * MapChipField::kBlockHeight, playerBottomPos.z));
@@ -120,14 +123,23 @@ void GameScene::Update() {
 		}
 	}
 
-	// 発射処理
-	const float triggerDistance = 4.3f;
+	// 発射処理 (指定されたコードをそのまま使用)
+	if (distanceToPlayerLeft < triggerDistance || distanceToPlayerRight < triggerDistance || distanceToPlayerTop < triggerDistance || distanceToPlayerBottom < triggerDistance) {
+		ShotPlayer = false;
+		playerCenter->Update2(); // 新しいプレイヤーの更新
+	} else {
+		playerCenter->Update3();
+	}
 
-	if ((playerCenterPos.Distance(playerLeftPos) < triggerDistance) && Input::GetInstance()->PushKey(DIK_SPACE)) {
+	// **横方向の発射処理**
+	if ((distanceToPlayerLeft < triggerDistance) && Input::GetInstance()->PushKey(DIK_SPACE)) {
 		Vector3 velocity = playerCenter->GetVelocity();
 		ShotPlayer = true;
-		velocity.x = MapChipField::kBlockWidth / 2; // 右方向
+		velocity.x = MapChipField::kBlockWidth / 2;
 		playerCenter->SetVelocity(velocity);
+		if (velocity.x == 0) {
+			ShotPlayer = false;
+		}
 
 		// playerCenterのy座標をplayerLeftに合わせる
 		Vector3 alignedPos = playerCenter->GetWorldPosition();
@@ -135,23 +147,30 @@ void GameScene::Update() {
 		playerCenter->SetWorldPosition(alignedPos);
 	}
 
-	if ((playerCenterPos.Distance(playerRightPos) < triggerDistance) && Input::GetInstance()->PushKey(DIK_SPACE)) {
+	if ((distanceToPlayerRight < triggerDistance) && Input::GetInstance()->PushKey(DIK_SPACE)) {
 		Vector3 velocity = playerCenter->GetVelocity();
 		ShotPlayer = true;
-		velocity.x = -MapChipField::kBlockWidth / 2; // 左方向
+		velocity.x = -MapChipField::kBlockWidth / 2;
 		playerCenter->SetVelocity(velocity);
 
+		if (velocity.x == 0) {
+			ShotPlayer = false;
+		}
 		// playerCenterのy座標をplayerRightに合わせる
 		Vector3 alignedPos = playerCenter->GetWorldPosition();
 		alignedPos.y = playerRightPos.y;
 		playerCenter->SetWorldPosition(alignedPos);
 	}
 
-	if ((playerCenterPos.Distance(playerTopPos) < triggerDistance) && Input::GetInstance()->PushKey(DIK_SPACE)) {
+	// **縦方向の発射処理** (新しく追加)
+	if ((distanceToPlayerTop < triggerDistance) && Input::GetInstance()->PushKey(DIK_SPACE)) {
 		Vector3 velocity = playerCenter->GetVelocity();
 		ShotPlayer = true;
-		velocity.y = -MapChipField::kBlockHeight / 2; // 上方向
+		velocity.y = -MapChipField::kBlockHeight / 2;
 		playerCenter->SetVelocity(velocity);
+		if (velocity.y == 0) {
+			ShotPlayer = false;
+		}
 
 		// playerCenterのx座標をplayerTopに合わせる
 		Vector3 alignedPos = playerCenter->GetWorldPosition();
@@ -159,23 +178,19 @@ void GameScene::Update() {
 		playerCenter->SetWorldPosition(alignedPos);
 	}
 
-	if ((playerCenterPos.Distance(playerBottomPos) < triggerDistance) && Input::GetInstance()->PushKey(DIK_SPACE)) {
+	if ((distanceToPlayerBottom < triggerDistance) && Input::GetInstance()->PushKey(DIK_SPACE)) {
 		Vector3 velocity = playerCenter->GetVelocity();
 		ShotPlayer = true;
-		velocity.y = MapChipField::kBlockHeight / 2; // 下方向
+		velocity.y = MapChipField::kBlockHeight / 2;
 		playerCenter->SetVelocity(velocity);
 
+		if (velocity.y == 0) {
+			ShotPlayer = false;
+		}
 		// playerCenterのx座標をplayerBottomに合わせる
 		Vector3 alignedPos = playerCenter->GetWorldPosition();
 		alignedPos.x = playerBottomPos.x;
 		playerCenter->SetWorldPosition(alignedPos);
-	}
-
-	// 発射後のリセット処理
-	Vector3 velocity = playerCenter->GetVelocity();
-	if (ShotPlayer && velocity.Length() < 0.01f) {
-		ShotPlayer = false;                          // 発射が完了したと判断してリセット
-		playerCenter->SetVelocity(Vector3(0, 0, 0)); // 速度リセット
 	}
 
 	// ゲーム終了フラグ (DIK_2)
