@@ -400,6 +400,30 @@ void Player::GraundSetting(const CollisionMapInfo& info) {
 	}
 }
 
+void Player::UpdateCenter() {
+	worldTransform_.TransferMatrix();
+
+	// X方向の速度はリセットせずそのまま
+	velocity_.x = velocity_.x;
+
+	// Y方向の動きを適切に制御
+	if (velocity_.y != 0) {
+		velocity_.y += kGravityAcceleration;
+	}
+
+	CollisionMapInfo collisionMapInfo;
+	collisionMapInfo.movement = velocity_;
+	collisionMapInfo.landingFlag = false;
+	collisionMapInfo.wallContactFlag = false;
+
+	CheckMapCollision(collisionMapInfo);
+	JudgmentMove(collisionMapInfo);
+	CeilingContact(collisionMapInfo);
+	GraundSetting(collisionMapInfo);
+
+	worldTransform_.UpdateMatarix();
+}
+
 void Player::JudgmentMove(const CollisionMapInfo& info) {
 	// 移動
 	worldTransform_.translation_ += info.movement;

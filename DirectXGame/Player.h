@@ -54,7 +54,7 @@ public:
 	void JudgmentMove(const CollisionMapInfo& info);
 	void CeilingContact(const CollisionMapInfo& info);
 	void GraundSetting(const CollisionMapInfo& info);
-
+	void UpdateCenter();
 	Vector3 CornerPosition(const Vector3& center, Corner corner);
 	Vector3 GetWorldPosition();
 	AABB GetAABB();

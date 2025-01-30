@@ -126,9 +126,9 @@ void GameScene::Update() {
 	// 発射処理 (指定されたコードをそのまま使用)
 	if (distanceToPlayerLeft < triggerDistance || distanceToPlayerRight < triggerDistance || distanceToPlayerTop < triggerDistance || distanceToPlayerBottom < triggerDistance) {
 		ShotPlayer = false;
-		playerCenter->Update2(); // 新しいプレイヤーの更新
+		playerCenter->UpdateCenter();
 	} else {
-		playerCenter->Update3();
+		playerCenter->UpdateCenter();
 	}
 
 	// **横方向の発射処理**
