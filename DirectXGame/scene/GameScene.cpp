@@ -29,6 +29,7 @@ void GameScene::Initialize() {
 
 	GenerateBlcoks();
 
+	modelPlayer_ = Model::CreateFromOBJ("player", true);
 
 
 	// デバッグカメラの生成
