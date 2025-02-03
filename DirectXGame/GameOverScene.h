@@ -5,6 +5,7 @@
 #include "Input.h"
 #include "Model.h"
 #include "Sprite.h"
+#include "skydome.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 
@@ -45,6 +46,17 @@ private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
+
+	ViewProjection viewProjection_;
+	WorldTransform worldTransform_;
+
+	// モデル
+	Model* model_ = nullptr;
+	Model* model2_ = nullptr;
+
+	// SkyDome
+	Skydome* skydome_ = nullptr;
+	Model* modelSkydome_ = nullptr;
 
 	// 終了フラグ
 	bool finished_ = false;

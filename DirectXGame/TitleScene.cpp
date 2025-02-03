@@ -3,12 +3,20 @@
 
 #include <Input.h>
 
-
-
 void TitleScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
-	titleTextureHandle_ = TextureManager::Load("title/title.png");
-	sprite_ = Sprite::Create(titleTextureHandle_, {0, 0});
+	// ワールドトランスフォームの初期化
+	worldTransform_.Initialize();
+	// ビュープロジェクションの初期化
+	viewProjection_.Initialize();
+
+	model_ = Model::CreateFromOBJ("title", true);
+	model2_ = Model::CreateFromOBJ("title2", true);
+
+	// SkyDome
+	skydome_ = new Skydome();
+	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
+	skydome_->Initialize(modelSkydome_, &viewProjection_);
 }
 
 void TitleScene::Update() {
@@ -24,11 +32,27 @@ void TitleScene::Draw() {
 	/// <summary>
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
-	sprite_->Draw(); 
+	
 	// スプライト描画後処理
 	Sprite::PostDraw();
 	// 深度バッファクリア
 	dxCommon_->ClearDepthBuffer();
 	
+#pragma region 3Dオブジェクト描画
+	// 3Dオブジェクト描画前処理
+	Model::PreDraw(commandList);
 
+	/// <summary>
+	/// ここに3Dオブジェクトの描画処理を追加できる
+	/// </summary>
+	// 縦横ブロック描画
+
+	model_->Draw(worldTransform_, viewProjection_);
+	model2_->Draw(worldTransform_, viewProjection_);
+
+	skydome_->Draw();
+
+	// 3Dオブジェクト描画後処理
+	Model::PostDraw();
+#pragma endregion
 }

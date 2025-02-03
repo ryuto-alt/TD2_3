@@ -7,10 +7,22 @@ GameOverScene::GameOverScene() {}
 GameOverScene::~GameOverScene() {}
 
 void GameOverScene::Initialize() {
+	// ワールドトランスフォームの初期化
+	worldTransform_.Initialize();
+	// ビュープロジェクションの初期化
+	viewProjection_.Initialize();
 
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
+
+	model_ = Model::CreateFromOBJ("GameOver", true);
+	model2_ = Model::CreateFromOBJ("title2", true);
+
+	// SkyDome
+	skydome_ = new Skydome();
+	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
+	skydome_->Initialize(modelSkydome_, &viewProjection_);
 }
 
 void GameOverScene::Update() {
@@ -45,6 +57,11 @@ void GameOverScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+
+	model_->Draw(worldTransform_, viewProjection_);
+	model2_->Draw(worldTransform_, viewProjection_);
+
+	skydome_->Draw();
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
