@@ -13,7 +13,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "mapchip.h"
-
+#include "Enemy.h"
 #include <Camera.h>
 #include <imgui.h>
 
@@ -87,6 +87,8 @@ private: // メンバ変数
 	Player* playerLeft = new Player();
 	Player* playerRight = new Player();
 	Player* playerCenter = new Player();
+
+	Enemy* enemy_ = new Enemy();
 
 	Camera* Camera_ = nullptr;
 

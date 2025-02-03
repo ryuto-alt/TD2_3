@@ -106,7 +106,6 @@ void Player::Update3() {
 void Player::SetVelocity(const Vector3& velocity) {
 	velocity_ = velocity;
 	worldTransform_.translation_ += velocity_; // 速度を設定した際に即座に位置を更新
-	                                           // worldTransform_.translation_.y = 0; // 速度を設定した際に即座に位置を更新
 }
 
 void Player::Draw() { model_->Draw(worldTransform_, *viewProjection_); }
@@ -374,14 +373,6 @@ void Player::CheckMapCollisionLeftSlime(CollisionMapInfo& info, bool& hit) {
 	if (mapChipType == MapChipType::slime) {
 		hit = true;
 	}
-
-	if (hit) {
-		MapChipField::Rect rect = mapChipField_->GetRectByIndex(indexSet.xIndex, indexSet.yIndex);
-		info.movement.x = std::min(0.0f, (rect.left - worldTransform_.translation_.x) + (kWidth / 2.0f + kBlank));
-
-		// Y座標を1ブロック分落とす
-		worldTransform_.translation_.y -= MapChipField::kBlockHeight;
-	}
 }
 
 void Player::CheckMapCollisionRightSlime(CollisionMapInfo& info, bool& hit) {
@@ -405,13 +396,6 @@ void Player::CheckMapCollisionRightSlime(CollisionMapInfo& info, bool& hit) {
 		hit = true;
 	}
 
-	if (hit) {
-		MapChipField::Rect rect = mapChipField_->GetRectByIndex(indexSet.xIndex, indexSet.yIndex);
-		info.movement.x = std::max(1.0f, (rect.right - worldTransform_.translation_.x) - (kWidth / 2.0f));
-
-		// Y座標を1ブロック分落とす
-		worldTransform_.translation_.y -= MapChipField::kBlockHeight;
-	}
 }
 
 void Player::GraundSetting(const CollisionMapInfo& info) {

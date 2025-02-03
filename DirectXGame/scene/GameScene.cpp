@@ -55,22 +55,32 @@ void GameScene::Initialize() {
 	playerLeft = new Player();
 	playerRight = new Player();
 	playerCenter = new Player(); // 新しいプレイヤーの初期化
+
+	enemy_ = new Enemy();
+
 	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(8, 12);
 	Vector3 playerPosition2 = mapChipField_->GetMapChipPositionByIndex(8, -1);
 	Vector3 playerPosition3 = mapChipField_->GetMapChipPositionByIndex(-1, 5);
 	Vector3 playerPosition4 = mapChipField_->GetMapChipPositionByIndex(16, 5);
 	Vector3 playerPosition5 = mapChipField_->GetMapChipPositionByIndex(14, 5); // 新しいプレイヤーの座標
+
+	Vector3 enemy_position = mapChipField_->GetMapChipPositionByIndex(8, 8);
+
 	playerBottom->Initialize(modelPlayer_, &viewProjection_, playerPosition);
 	playerTop->Initialize(modelPlayer_, &viewProjection_, playerPosition2);
 	playerLeft->Initialize(modelPlayer_, &viewProjection_, playerPosition3);
 	playerRight->Initialize(modelPlayer_, &viewProjection_, playerPosition4);
 	playerCenter->Initialize(modelPlayer_, &viewProjection_, playerPosition5); // 新しいプレイヤーの初期化
 
+	enemy_->Initialize(modelPlayer_, &viewProjection_, enemy_position);
+
 	playerBottom->SetSnapEnabled(true);
 	playerTop->SetSnapEnabled(true);
 	playerLeft->SetSnapEnabled(true);
 	playerRight->SetSnapEnabled(true);
 	playerCenter->SetSnapEnabled(false); // playerCenter のスナップを無効化
+
+	enemy_->SetSnapEnabled(false);
 
 	// Camera
 	Camera_ = new Camera();
@@ -97,11 +107,15 @@ void GameScene::Update() {
 	Vector3 playerRightPos = playerRight->GetWorldPosition();
 	Vector3 playerCenterPos = playerCenter->GetWorldPosition();
 
+	Vector3 enemy_position = enemy_->GetWorldPosition();
+
 	// 発射処理に使用する距離を計算
 	float distanceToPlayerLeft = playerCenterPos.Distance(playerLeftPos);
 	float distanceToPlayerRight = playerCenterPos.Distance(playerRightPos);
 	float distanceToPlayerTop = playerCenterPos.Distance(playerTopPos);
 	float distanceToPlayerBottom = playerCenterPos.Distance(playerBottomPos);
+
+	//float distanceToEnemy = playerCenterPos.Distance(enemy_position);
 
 	// 発射をトリガーする距離
 	const float triggerDistance = 4.3f;
@@ -138,6 +152,7 @@ void GameScene::Update() {
 	if (followHorizontal) {
 
 		playerCenter->UpdateCenter2();
+		enemy_->UpdateCenter();
 	}
 
 	if (!followHorizontal) {
@@ -171,9 +186,12 @@ void GameScene::Update() {
 	// **横方向の発射処理**
 	if ((distanceToPlayerLeft < triggerDistance) && Input::GetInstance()->TriggerKey(DIK_SPACE)) {
 		Vector3 velocity = playerCenter->GetVelocity();
+		Vector3 enemyVelocity = enemy_->GetVelocity();
 		ShotPlayer = true;
 		velocity.x = MapChipField::kBlockWidth / 2;
+		enemyVelocity.x = MapChipField::kBlockWidth / 2;
 		playerCenter->SetVelocity(velocity);
+		enemy_->SetVelocity(enemyVelocity);
 
 		ChangeDelay = 10;
 
@@ -286,6 +304,8 @@ void GameScene::Draw() {
 	playerLeft->Draw();
 	playerRight->Draw();
 	playerCenter->Draw(); // 新しいプレイヤーの描画
+
+	enemy_->Draw();
 
 	for (uint32_t i = 0; i < worldTransformBlocks_.size(); ++i) {
 		for (uint32_t j = 0; j < worldTransformBlocks_[i].size(); ++j) {
