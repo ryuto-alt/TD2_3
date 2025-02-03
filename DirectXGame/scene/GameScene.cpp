@@ -29,8 +29,6 @@ void GameScene::Initialize() {
 
 	GenerateBlcoks();
 
-	modelPlayer_ = Model::CreateFromOBJ("player", true);
-
 
 	// デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
