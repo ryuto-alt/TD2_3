@@ -242,7 +242,6 @@ void GameScene::Update() {
 		playerCenter->SetWorldPosition(alignedPos);
 	}
 
-
 	// **プレイヤーと敵の中心座標を取得**
 	Vector3 enemyPos = enemy_->GetWorldPosition();
 
@@ -279,19 +278,20 @@ void GameScene::Update() {
 
 	// すべてのフラグがtrueの場合にシーンを変更
 	if (hitBottom && hitTop && hitLeft && hitRight) {
-		//clearシーン
+		// シーンクリア処理
+		//DebugText::GetInstance()->ConsolePrintf("Scene Clear!\n");
+		finished_ = true;
 	}
 
 	// ゲーム終了フラグ (DIK_2)
 	if (Scene > 6) {
-		//ゲームオーバーシーン
+		// ゲームオーバーシーン
 	}
 
-		// ゲーム終了フラグ (DIK_2)
+	// ゲーム終了フラグ (DIK_2)
 	if (Input::GetInstance()->PushKey(DIK_2)) {
-		//リセットボタン
+		// リセットボタン
 	}
-
 
 #pragma region ブロック描画
 	// 縦横ブロック更新

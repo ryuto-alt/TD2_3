@@ -4,6 +4,7 @@
 #include "Audio.h"
 #include "DebugCamera.h"
 #include "DirectXCommon.h"
+#include "Enemy.h"
 #include "ImGuiManager.h"
 #include "Input.h"
 #include "Model.h"
@@ -13,7 +14,6 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "mapchip.h"
-#include "Enemy.h"
 #include <Camera.h>
 #include <imgui.h>
 
@@ -95,7 +95,7 @@ private: // メンバ変数
 	Vector3 railcameraPos = {15.5f, 27.5f, -40.0f};
 	Vector3 railcameraRad = {0, 0, 0};
 
-	//huragu
+	// huragu
 	bool ShotPlayer = false;
 
 	// SkyDome
@@ -115,5 +115,5 @@ private: // メンバ変数
 
 	float Scene = 0;
 
-	//float triggerDistance = 1.0f; // 適切な値に設定
+	// float triggerDistance = 1.0f; // 適切な値に設定
 };
