@@ -55,6 +55,12 @@ private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
+	Audio* atkAudio_ = nullptr;
+
+		// attack音
+	int AttackAudioHandle_ = 0;
+	int attackAudio_ = -1;
+
 	ViewProjection viewProjection_;
 	WorldTransform worldTransform_;
 

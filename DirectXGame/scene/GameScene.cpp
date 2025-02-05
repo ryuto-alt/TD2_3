@@ -26,9 +26,11 @@ void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
+	atkAudio_ = Audio::GetInstance();
 
 	// ここでBGMのロードとフラグ初期化
 	BGMHandle_ = audio_->LoadWave("song.wav");
+	AttackAudioHandle_ = atkAudio_->LoadWave("./sound/Attack.wav");
 	isBGMPlaying_ = false;
 
 	// ワールドトランスフォームの初期化
@@ -193,6 +195,7 @@ void GameScene::Update() {
 
 	// **横方向の発射処理**
 	if ((distanceToPlayerLeft < triggerDistance) && Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+		atkAudio_->playAudio(attackAudio_, AttackAudioHandle_, false, 1.0f);
 		Vector3 velocity = playerCenter->GetVelocity();
 		ShotPlayer = true;
 		velocity.x = MapChipField::kBlockWidth / 2 - 0.5f;
@@ -206,6 +209,7 @@ void GameScene::Update() {
 		playerCenter->SetWorldPosition(alignedPos);
 	}
 	if ((distanceToPlayerRight < triggerDistance) && Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+		atkAudio_->playAudio(attackAudio_, AttackAudioHandle_, false, 1.0f);
 		Vector3 velocity = playerCenter->GetVelocity();
 		ShotPlayer = true;
 		velocity.x = -MapChipField::kBlockWidth / 2 + 0.5f;
@@ -220,6 +224,7 @@ void GameScene::Update() {
 	}
 	// **縦方向の発射処理**
 	if ((distanceToPlayerTop < triggerDistance) && Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+		atkAudio_->playAudio(attackAudio_, AttackAudioHandle_, false, 1.0f);
 		Vector3 velocity = playerCenter->GetVelocity();
 		ShotPlayer = true;
 		velocity.y = -MapChipField::kBlockHeight / 2 + 0.5f;
@@ -233,6 +238,7 @@ void GameScene::Update() {
 		playerCenter->SetWorldPosition(alignedPos);
 	}
 	if ((distanceToPlayerBottom < triggerDistance) && Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+		atkAudio_->playAudio(attackAudio_, AttackAudioHandle_, false, 1.0f);
 		Vector3 velocity = playerCenter->GetVelocity();
 		ShotPlayer = true;
 		velocity.y = MapChipField::kBlockHeight / 2 - 0.5f;

@@ -95,6 +95,13 @@ public:
 			Audio = PlayWave(AudioHandle, loopFlag, volume);
 		}
 	}
+
+		void playAudio(int& Audio, int& AudioHandle, bool loopFlag, float volume = 1.0f) {
+		if (IsPlaying(Audio) == 0 || Audio == -1) {
+			Audio = PlayWave(AudioHandle, loopFlag, volume);
+		}
+	}
+
 	void StopAudio(int AudioHandle) { StopWave(AudioHandle); }
 
 	/// <summary>
