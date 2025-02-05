@@ -145,7 +145,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ゲームウィンドウの作成
 	win = WinApp::GetInstance();
-	win->CreateGameWindow();
+	win->CreateGameWindow(L"2342_ハコボックス");
 
 	// DirectX初期化処理
 	dxCommon = DirectXCommon::GetInstance();
@@ -215,9 +215,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		
 		//imGui
-		ImGui::Begin("Scene");
-		ImGui::Text("Scene: %s", GetSceneName(scene)); // シーン名を表示
-		ImGui::End();
+
 		// 軸表示の更新
 		axisIndicator->Update();
 		// ImGui受付終了

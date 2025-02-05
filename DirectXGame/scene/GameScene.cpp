@@ -2,7 +2,7 @@
 #include "TextureManager.h"
 #include "mymath.h"
 #include <cassert>
-#include <regex>
+#include <regex> // 正規表現使うため追加
 
 GameScene::GameScene() {}
 
@@ -320,12 +320,6 @@ void GameScene::Update() {
 	viewProjection_.matProjection = Camera_->GetViewProjection().matProjection;
 	viewProjection_.TransferMatrix();
 
-	ImGui::Begin("Debug Info");
-	ImGui::Text("Hit Bottom: %s", hitBottom ? "true" : "False");
-	ImGui::Text("Hit Top: %s", hitTop ? "true" : "False");
-	ImGui::Text("Hit Left: %s", hitLeft ? "true" : "False");
-	ImGui::Text("Hit Right: %s", hitRight ? "true" : "False");
-	ImGui::End();
 #pragma endregion
 }
 
