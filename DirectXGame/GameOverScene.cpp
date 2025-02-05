@@ -7,20 +7,19 @@ GameOverScene::GameOverScene() {}
 GameOverScene::~GameOverScene() {}
 
 void GameOverScene::Initialize() {
-
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 }
 
 void GameOverScene::Update() {
-	if (Input::GetInstance()->PushKey(DIK_3)) {
+	// ゲームオーバーシーン中にSpaceキーを押したらタイトルに戻る
+	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
 		finished_ = true;
 	}
 }
 
 void GameOverScene::Draw() {
-
 	// コマンドリストの取得
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
@@ -60,6 +59,5 @@ void GameOverScene::Draw() {
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
-
 #pragma endregion
 }

@@ -9,13 +9,13 @@
 #include "WorldTransform.h"
 
 /// <summary>
-/// ゲームシーン
+/// ゲームオーバーシーン
 /// </summary>
 class GameOverScene {
 
 public: // メンバ関数
 	/// <summary>
-	/// コンストクラタ
+	/// コンストラクタ
 	/// </summary>
 	GameOverScene();
 
@@ -48,9 +48,4 @@ private: // メンバ変数
 
 	// 終了フラグ
 	bool finished_ = false;
-	
-
-	/// <summary>
-	/// ゲームシーン用
-	/// </summary>
 };

@@ -1,10 +1,10 @@
 #include "Audio.h"
 #include "AxisIndicator.h"
 #include "DirectXCommon.h"
-#include "TitleScene.h"
-#include "GameScene.h"
 #include "GameOverScene.h"
-#include "GameClear.h"
+#include "GameScene.h"
+#include "TitleScene.h"
+// #include "GameClear.h"  // ゲームクリアシーンが不要ならコメントアウト（必要なら同様の修正する）
 
 #include "ImGuiManager.h"
 #include "PrimitiveDrawer.h"
@@ -14,21 +14,18 @@
 GameScene* gameScene = nullptr;
 TitleScene* titleScene = nullptr;
 GameOverScene* gameOverScene = nullptr;
-GameClearScene* gameClearScene = nullptr;
-
-
-
+// GameClearScene* gameClearScene = nullptr; // 不要なら削除
 
 enum class Scene {
-	kUnkown = 0,
+	kUnknown = 0,
 	kTitle,
 	kGame,
-	kGameOver,
-	kGameClear
-
+	kGameOver
+	// kGameClear  // ゲームクリアシーン使うなら追加
 };
+
 // 現在シーン
-Scene scene = Scene::kUnkown;
+Scene scene = Scene::kUnknown;
 
 const char* GetSceneName(Scene scenes) {
 	switch (scenes) {
@@ -38,60 +35,41 @@ const char* GetSceneName(Scene scenes) {
 		return "Game";
 	case Scene::kGameOver:
 		return "Game Over";
-	case Scene::kGameClear:
-		return "Game Clear";
+	// case Scene::kGameClear:
+	//     return "Game Clear";
 	default:
 		return "Unknown";
 	}
 }
 
-
 void ChangeScene() {
 	switch (scene) {
 	case Scene::kTitle:
 		if (titleScene->IsFinished()) {
-			// シーン変更
+			// タイトルシーン終了でゲームシーンへ
 			scene = Scene::kGame;
-			// 旧シーンの解放
 			delete titleScene;
 			titleScene = nullptr;
-			// 新シーンの生成と初期化
 			gameScene = new GameScene;
 			gameScene->Initialize();
 		}
 		break;
 	case Scene::kGame:
 		if (gameScene->IsFinished()) {
-			// シーン変更
+			// ゲームシーン終了でゲームオーバーシーンへ
 			scene = Scene::kGameOver;
-			// 旧シーンの解放
 			delete gameScene;
 			gameScene = nullptr;
-			// 新シーンの生成と初期化
 			gameOverScene = new GameOverScene;
 			gameOverScene->Initialize();
 		}
 		break;
 	case Scene::kGameOver:
 		if (gameOverScene->IsFinished()) {
-			// シーン変更
-			scene = Scene::kGameClear;
-			// 旧シーンの解放
+			// ゲームオーバーシーン終了でタイトルシーンへ戻る
+			scene = Scene::kTitle;
 			delete gameOverScene;
 			gameOverScene = nullptr;
-			// 新シーンの生成と初期化
-			gameClearScene = new GameClearScene;
-			gameClearScene->Initialize();
-		}
-		break;
-	case Scene::kGameClear:
-		if (gameClearScene->IsFinished()) {
-			// シーン変更
-			scene = Scene::kTitle;
-			// 旧シーンの解放
-			delete gameClearScene;
-			gameClearScene = nullptr;
-			// 新シーンの生成と初期化
 			titleScene = new TitleScene;
 			titleScene->Initialize();
 		}
@@ -110,9 +88,6 @@ void UpdateScene() {
 	case Scene::kGameOver:
 		gameOverScene->Update();
 		break;
-	case Scene::kGameClear:
-		gameClearScene->Update();
-		break;
 	}
 }
 
@@ -126,9 +101,6 @@ void DrawScene() {
 		break;
 	case Scene::kGameOver:
 		gameOverScene->Draw();
-		break;
-	case Scene::kGameClear:
-		gameClearScene->Draw();
 		break;
 	}
 }
@@ -182,20 +154,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	primitiveDrawer->Initialize();
 #pragma endregion
 
-	// タイトルシーン初期化
+	// タイトルシーンだけ初期化しておいて、シーンはタイトルからスタート
 	titleScene = new TitleScene;
 	titleScene->Initialize();
-	// ゲームシーンの初期化
-	gameScene = new GameScene();
-	gameScene->Initialize();
-	scene = Scene::kGameOver;
-	//ゲームオーバーシーン初期化
-	gameOverScene = new GameOverScene();
-	gameOverScene->Initialize();
-	scene = Scene::kGameClear;
-	//ゲームクリアシーン初期化
-	gameClearScene = new GameClearScene();
-	gameClearScene->Initialize();
 	scene = Scene::kTitle;
 
 	// メインループ
@@ -209,17 +170,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		imguiManager->Begin();
 		// 入力関連の毎フレーム処理
 		input->Update();
-		//シーン
+
+		// シーン切り替え処理
 		ChangeScene();
 		UpdateScene();
 
-		
-		//imGui
+		// ImGuiにシーン名表示
 		ImGui::Begin("Scene");
-		ImGui::Text("Scene: %s", GetSceneName(scene)); // シーン名を表示
+		ImGui::Text("Scene: %s", GetSceneName(scene));
 		ImGui::End();
+
 		// 軸表示の更新
 		axisIndicator->Update();
+
 		// ImGui受付終了
 		imguiManager->End();
 		// 描画開始
@@ -238,10 +201,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 
 	// 各種解放
-	delete titleScene;
-	delete gameScene;
-	delete gameOverScene;
-	delete gameClearScene;
+	if (titleScene)
+		delete titleScene;
+	if (gameScene)
+		delete gameScene;
+	if (gameOverScene)
+		delete gameOverScene;
+	// if (gameClearScene) delete gameClearScene;
 
 	// 3Dモデル解放
 	Model::StaticFinalize();

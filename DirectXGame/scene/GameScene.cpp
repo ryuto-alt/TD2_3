@@ -276,6 +276,13 @@ void GameScene::Update() {
 		enemy_->InitializePosition(enemy_position5);
 	}
 
+	// ゲーム終了フラグ (DIK2)
+	// Sceneが6を超えたらゲームオーバーにする
+	if (Scene > 6) {
+		// ゲームオーバーシーンの処理を書く
+		finished_ = true;
+	}
+
 	// すべてのフラグがtrueの場合にシーンを変更
 	if (hitBottom && hitTop && hitLeft && hitRight) {
 		// シーンクリア処理
@@ -283,10 +290,6 @@ void GameScene::Update() {
 		finished_ = true;
 	}
 
-	// ゲーム終了フラグ (DIK_2)
-	if (Scene > 6) {
-		// ゲームオーバーシーン
-	}
 
 	// ゲーム終了フラグ (DIK_2)
 	if (Input::GetInstance()->PushKey(DIK_2)) {
