@@ -108,5 +108,10 @@ private: // メンバ変数
 
 	float offsetX = 0.0f;
 
+	bool hitBottom = false;
+	bool hitTop = false;
+	bool hitLeft = false;
+	bool hitRight = false;
+
 	//float triggerDistance = 1.0f; // 適切な値に設定
 };

@@ -32,7 +32,7 @@ void GameScene::Initialize() {
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 	NormalBlock = Model::CreateFromOBJ("cube", true);
-	BomBlock = Model::CreateFromOBJ("bomblock", true);
+	BomBlock = Model::CreateFromOBJ("goalblock", true);
 	SlimeBlock = Model::CreateFromOBJ("slimeblock", true);
 	EnemyBlock = Model::CreateFromOBJ("enemyblock", true);
 	GoalBlock = Model::CreateFromOBJ("goalblock", true);
@@ -70,9 +70,9 @@ void GameScene::Initialize() {
 	playerTop->Initialize(modelPlayer_, &viewProjection_, playerPosition2);
 	playerLeft->Initialize(modelPlayer_, &viewProjection_, playerPosition3);
 	playerRight->Initialize(modelPlayer_, &viewProjection_, playerPosition4);
-	playerCenter->Initialize(modelPlayer_, &viewProjection_, playerPosition5); // 新しいプレイヤーの初期化
+	playerCenter->Initialize(BomBlock, &viewProjection_, playerPosition5); // 新しいプレイヤーの初期化
 
-	enemy_->Initialize(modelPlayer_, &viewProjection_, enemy_position);
+	enemy_->Initialize(EnemyBlock, &viewProjection_, enemy_position);
 
 	playerBottom->SetSnapEnabled(true);
 	playerTop->SetSnapEnabled(true);
@@ -253,19 +253,23 @@ void GameScene::Update() {
 	float distanceToEnemyRight = playerRightPos.Distance(enemyPos);
 
 	if (distanceToEnemyBottom <= triggerDistance) {
-		Vector3 enemy_position2 = mapChipField_->GetMapChipPositionByIndex(5, 5);
+		hitBottom = true;
+		Vector3 enemy_position2 = mapChipField_->GetMapChipPositionByIndex(8, 5);
 		enemy_->InitializePosition(enemy_position2);
 	}
 	if (distanceToEnemyTop <= triggerDistance) {
-		Vector3 enemy_position3 = mapChipField_->GetMapChipPositionByIndex(5, 5);
+		hitTop = true;
+		Vector3 enemy_position3 = mapChipField_->GetMapChipPositionByIndex(11, 2);
 		enemy_->InitializePosition(enemy_position3);
 	}
 	if (distanceToEnemyLeft <= triggerDistance) {
-		Vector3 enemy_position4 = mapChipField_->GetMapChipPositionByIndex(5, 5);
+		hitLeft = true;
+		Vector3 enemy_position4 = mapChipField_->GetMapChipPositionByIndex(7, 6);
 		enemy_->InitializePosition(enemy_position4);
 	}
 	if (distanceToEnemyRight <= triggerDistance) {
-		Vector3 enemy_position5 = mapChipField_->GetMapChipPositionByIndex(5, 5);
+		hitRight = true;
+		Vector3 enemy_position5 = mapChipField_->GetMapChipPositionByIndex(8, 9);
 		enemy_->InitializePosition(enemy_position5);
 	}
 
@@ -292,8 +296,14 @@ void GameScene::Update() {
 	viewProjection_.matProjection = Camera_->GetViewProjection().matProjection;
 	viewProjection_.TransferMatrix();
 
-	ImGui::Begin("Scene");
-	ImGui::End();
+	ImGui::Begin("Debug Info"); // ImGuiウィンドウ開始
+
+	ImGui::Text("Hit Bottom: %s", hitBottom ? "true" : "False");
+	ImGui::Text("Hit Top: %s", hitTop ? "true" : "False");
+	ImGui::Text("Hit Left: %s", hitLeft ? "true" : "False");
+	ImGui::Text("Hit Right: %s", hitRight ? "true" : "False");
+
+	ImGui::End(); // ImGuiウィンドウ終了
 }
 
 void GameScene::Draw() {
