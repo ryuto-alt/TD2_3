@@ -7,6 +7,7 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "skydome.h"
 
 /// <summary>
 /// ゲームシーン
@@ -42,9 +43,20 @@ public: // メンバ関数
 	bool IsFinished() const { return finished_; }
 
 private: // メンバ変数
+	ViewProjection viewProjection_;
+	WorldTransform worldTransform_;
+
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
+
+	// モデル
+	Model* model_ = nullptr;
+	Model* model2_ = nullptr;
+
+	// SkyDome
+	Skydome* skydome_ = nullptr;
+	Model* modelSkydome_ = nullptr;
 
 	// 終了フラグ
 	bool finished_ = false;

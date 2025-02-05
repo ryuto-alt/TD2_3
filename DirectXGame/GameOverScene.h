@@ -7,6 +7,7 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "skydome.h"
 
 /// <summary>
 /// ゲームシーン
@@ -46,9 +47,19 @@ private: // メンバ変数
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
 
+	ViewProjection viewProjection_;
+	WorldTransform worldTransform_;
+
+	// モデル
+	Model* model_ = nullptr;
+	Model* model2_ = nullptr;
+
+	// SkyDome
+	Skydome* skydome_ = nullptr;
+	Model* modelSkydome_ = nullptr;
+
 	// 終了フラグ
 	bool finished_ = false;
-	
 
 	/// <summary>
 	/// ゲームシーン用
