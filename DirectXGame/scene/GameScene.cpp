@@ -192,7 +192,7 @@ void GameScene::Update() {
 		playerCenter->SetVelocity(velocity);
 
 		ChangeDelay = 10;
-
+		Scene += 1;
 		// playerCenterのy座標をplayerLeftに合わせる
 		Vector3 alignedPos = playerCenter->GetWorldPosition();
 		alignedPos.y = playerLeftPos.y;
@@ -206,7 +206,7 @@ void GameScene::Update() {
 		playerCenter->SetVelocity(velocity);
 
 		ChangeDelay = 10;
-
+		Scene += 1;
 		// playerCenterのy座標をplayerRightに合わせる
 		Vector3 alignedPos = playerCenter->GetWorldPosition();
 		alignedPos.y = playerRightPos.y;
@@ -221,7 +221,7 @@ void GameScene::Update() {
 		playerCenter->SetVelocity(velocity);
 
 		ChangeDelay = 10;
-
+		Scene += 1;
 		// playerCenterのx座標をplayerTopに合わせる
 		Vector3 alignedPos = playerCenter->GetWorldPosition();
 		alignedPos.x = playerTopPos.x;
@@ -229,13 +229,14 @@ void GameScene::Update() {
 	}
 
 	if ((distanceToPlayerBottom < triggerDistance) && Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+		Scene += 1;
 		Vector3 velocity = playerCenter->GetVelocity();
 		ShotPlayer = true;
 		velocity.y = MapChipField::kBlockHeight / 2 - 0.5f;
 		playerCenter->SetVelocity(velocity);
 
 		ChangeDelay = 10;
-
+		Scene += 1;
 		// playerCenterのx座標をplayerBottomに合わせる
 		Vector3 alignedPos = playerCenter->GetWorldPosition();
 		alignedPos.x = playerBottomPos.x;
@@ -283,14 +284,10 @@ void GameScene::Update() {
 		finished_ = true;
 	}
 
-	// ゲーム終了フラグ (DIK_2)
-	if (Scene > 6) {
-		// ゲームオーバーシーン
-	}
 
 	// ゲーム終了フラグ (DIK_2)
 	if (Input::GetInstance()->PushKey(DIK_2)) {
-		// リセットボタン
+		finished_ = true;
 	}
 
 #pragma region ブロック描画
@@ -311,6 +308,8 @@ void GameScene::Update() {
 	viewProjection_.TransferMatrix();
 
 	ImGui::Begin("Debug Info"); // ImGuiウィンドウ開始
+
+	ImGui::Text("Scene: %d", Scene); // Scene の数値を表示
 
 	ImGui::Text("Hit Bottom: %s", hitBottom ? "true" : "False");
 	ImGui::Text("Hit Top: %s", hitTop ? "true" : "False");
