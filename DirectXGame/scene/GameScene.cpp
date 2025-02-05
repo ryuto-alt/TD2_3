@@ -2,6 +2,7 @@
 #include "TextureManager.h"
 #include "mymath.h"
 #include <cassert>
+#include <regex> // 正規表現使うため追加
 
 GameScene::GameScene() {}
 
@@ -22,10 +23,13 @@ GameScene::~GameScene() {
 }
 
 void GameScene::Initialize() {
-
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
+
+	// ここでBGMのロードとフラグ初期化
+	BGMHandle_ = audio_->LoadWave("song.wav");
+	isBGMPlaying_ = false;
 
 	// ワールドトランスフォームの初期化
 	worldTransform_.Initialize();
@@ -92,6 +96,13 @@ void GameScene::Initialize() {
 
 void GameScene::Update() {
 
+	// BGM再生処理
+	if (!isBGMPlaying_) {
+		// BGMAudio_はメンバ変数として宣言済みと仮定してる
+		audio_->PlayAudio(BGMAudio_, BGMHandle_, true, 0.3f);
+		isBGMPlaying_ = true;
+	}
+
 	// プレイヤー全体を常に更新
 	if (!ShotPlayer) {
 		playerBottom->Update();
@@ -150,12 +161,9 @@ void GameScene::Update() {
 
 	// 発射処理 (元のコード)
 	if (followHorizontal) {
-
 		playerCenter->UpdateCenter2();
 	}
-
 	if (!followHorizontal) {
-
 		playerCenter->UpdateCenter();
 	}
 
@@ -173,7 +181,6 @@ void GameScene::Update() {
 			}
 		}
 	}
-
 	if (ChangeDelay < 0) {
 		if (!followHorizontal) {
 			if (ShotPlayer) {
@@ -192,13 +199,12 @@ void GameScene::Update() {
 		playerCenter->SetVelocity(velocity);
 
 		ChangeDelay = 10;
-		Scene += 1;
+
 		// playerCenterのy座標をplayerLeftに合わせる
 		Vector3 alignedPos = playerCenter->GetWorldPosition();
 		alignedPos.y = playerLeftPos.y;
 		playerCenter->SetWorldPosition(alignedPos);
 	}
-
 	if ((distanceToPlayerRight < triggerDistance) && Input::GetInstance()->TriggerKey(DIK_SPACE)) {
 		Vector3 velocity = playerCenter->GetVelocity();
 		ShotPlayer = true;
@@ -206,13 +212,12 @@ void GameScene::Update() {
 		playerCenter->SetVelocity(velocity);
 
 		ChangeDelay = 10;
-		Scene += 1;
+
 		// playerCenterのy座標をplayerRightに合わせる
 		Vector3 alignedPos = playerCenter->GetWorldPosition();
 		alignedPos.y = playerRightPos.y;
 		playerCenter->SetWorldPosition(alignedPos);
 	}
-
 	// **縦方向の発射処理**
 	if ((distanceToPlayerTop < triggerDistance) && Input::GetInstance()->TriggerKey(DIK_SPACE)) {
 		Vector3 velocity = playerCenter->GetVelocity();
@@ -221,22 +226,20 @@ void GameScene::Update() {
 		playerCenter->SetVelocity(velocity);
 
 		ChangeDelay = 10;
-		Scene += 1;
+
 		// playerCenterのx座標をplayerTopに合わせる
 		Vector3 alignedPos = playerCenter->GetWorldPosition();
 		alignedPos.x = playerTopPos.x;
 		playerCenter->SetWorldPosition(alignedPos);
 	}
-
 	if ((distanceToPlayerBottom < triggerDistance) && Input::GetInstance()->TriggerKey(DIK_SPACE)) {
-		Scene += 1;
 		Vector3 velocity = playerCenter->GetVelocity();
 		ShotPlayer = true;
 		velocity.y = MapChipField::kBlockHeight / 2 - 0.5f;
 		playerCenter->SetVelocity(velocity);
 
 		ChangeDelay = 10;
-		Scene += 1;
+
 		// playerCenterのx座標をplayerBottomに合わせる
 		Vector3 alignedPos = playerCenter->GetWorldPosition();
 		alignedPos.x = playerBottomPos.x;
@@ -277,17 +280,21 @@ void GameScene::Update() {
 		enemy_->InitializePosition(enemy_position5);
 	}
 
-	// すべてのフラグがtrueの場合にシーンを変更
-	if (hitBottom && hitTop && hitLeft && hitRight) {
-		// シーンクリア処理
-		//DebugText::GetInstance()->ConsolePrintf("Scene Clear!\n");
+	// ゲーム終了フラグ (DIK2)
+	if (Scene > 6) {
 		finished_ = true;
+		// ゲーム終了時はBGM停止
+		audio_->StopAudio(BGMHandle_);
 	}
 
-
-	// ゲーム終了フラグ (DIK_2)
-	if (Input::GetInstance()->PushKey(DIK_2)) {
+	// すべてのフラグがtrueの場合にシーンを変更
+	if (hitBottom && hitTop && hitLeft && hitRight) {
 		finished_ = true;
+		audio_->StopAudio(BGMHandle_);
+	}
+
+	if (Input::GetInstance()->PushKey(DIK_2)) {
+		// リセットボタンの処理（必要ならここに）
 	}
 
 #pragma region ブロック描画
@@ -307,46 +314,29 @@ void GameScene::Update() {
 	viewProjection_.matProjection = Camera_->GetViewProjection().matProjection;
 	viewProjection_.TransferMatrix();
 
-	ImGui::Begin("Debug Info"); // ImGuiウィンドウ開始
-
-	ImGui::Text("Scene: %d", Scene); // Scene の数値を表示
-
+	ImGui::Begin("Debug Info");
 	ImGui::Text("Hit Bottom: %s", hitBottom ? "true" : "False");
 	ImGui::Text("Hit Top: %s", hitTop ? "true" : "False");
 	ImGui::Text("Hit Left: %s", hitLeft ? "true" : "False");
 	ImGui::Text("Hit Right: %s", hitRight ? "true" : "False");
-
-	ImGui::End(); // ImGuiウィンドウ終了
+	ImGui::End();
+#pragma endregion
 }
 
 void GameScene::Draw() {
-
-	// コマンドリストの取得
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
 #pragma region 背景スプライト描画
-	// 背景スプライト描画前処理
 	Sprite::PreDraw(commandList);
-
-	/// <summary>
-	/// ここに背景スプライトの描画処理を追加できる
-	/// </summary>
-
-	// スプライト描画後処理
+	// ここに背景スプライトの描画処理を追加できる
 	Sprite::PostDraw();
-	// 深度バッファクリア
 	dxCommon_->ClearDepthBuffer();
 #pragma endregion
 
 #pragma region 3Dオブジェクト描画
-	// 3Dオブジェクト描画前処理
 	Model::PreDraw(commandList);
 
-	/// <summary>
-	/// ここに3Dオブジェクトの描画処理を追加できる
-	/// </summary>
-	// 縦横ブロック描画
-
+	// プレイヤー描画
 	playerBottom->Draw();
 	playerTop->Draw();
 	playerLeft->Draw();
@@ -361,7 +351,6 @@ void GameScene::Draw() {
 				continue;
 
 			MapChipType chipType = mapChipField_->GetMapChipTypeByIndex(j, i);
-
 			if (chipType == MapChipType::lBlock) {
 				NormalBlock->Draw(*worldTransformBlocks_[i][j], viewProjection_);
 			} else if (chipType == MapChipType::bom) {
@@ -377,22 +366,13 @@ void GameScene::Draw() {
 	}
 
 	skydome_->Draw();
-
-	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion
 
 #pragma region 前景スプライト描画
-	// 前景スプライト描画前処理
 	Sprite::PreDraw(commandList);
-
-	/// <summary>
-	/// ここに前景スプライトの描画処理を追加できる
-	/// </summary>
-
-	// スプライト描画後処理
+	// ここに前景スプライトの描画処理を追加できる
 	Sprite::PostDraw();
-
 #pragma endregion
 }
 
@@ -400,7 +380,6 @@ void GameScene::GenerateBlcoks() {
 	uint32_t numBlockVirticle = mapChipField_->GetNumBlockVirtical();
 	uint32_t numBlockHorizontal = mapChipField_->GetNumBlockHorizontal();
 
-	// ブロック配列のサイズを調整
 	worldTransformBlocks_.resize(numBlockVirticle);
 	for (uint32_t i = 0; i < numBlockVirticle; ++i) {
 		worldTransformBlocks_[i].resize(numBlockHorizontal);
@@ -409,32 +388,22 @@ void GameScene::GenerateBlcoks() {
 	for (uint32_t i = 0; i < numBlockVirticle; ++i) {
 		for (uint32_t j = 0; j < numBlockHorizontal; ++j) {
 			MapChipType chipType = mapChipField_->GetMapChipTypeByIndex(j, i);
-
 			if (chipType != MapChipType::kBlank) {
 				WorldTransform* worldTransform = new WorldTransform();
 				worldTransform->Initialize();
-
-				// 位置を設定
 				worldTransform->translation_ = mapChipField_->GetMapChipPositionByIndex(j, i);
-
 				worldTransformBlocks_[i][j] = worldTransform;
 			}
-
 			switch (chipType) {
 			case MapChipType::lBlock:
-				// ブロック1の処理
 				break;
 			case MapChipType::bom:
-				// 爆弾の処理
 				break;
 			case MapChipType::enemy:
-				// 敵の処理
 				break;
 			case MapChipType::goal:
-				// ゴールの処理
 				break;
 			case MapChipType::slime:
-				// スライムの処理
 				break;
 			default:
 				break;

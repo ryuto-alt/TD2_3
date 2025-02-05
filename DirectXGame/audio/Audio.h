@@ -90,6 +90,12 @@ public:
 	/// 0で無音、1がデフォルト音量。あまり大きくしすぎると音割れする</param>
 	/// <returns>再生ハンドル</returns>
 	uint32_t PlayWave(uint32_t soundDataHandle, bool loopFlag = false, float volume = 1.0f);
+	void PlayAudio(int& Audio, int& AudioHandle, bool loopFlag, float volume = 1.0f) {
+		if (IsPlaying(Audio) == 0 || Audio == -1) {
+			Audio = PlayWave(AudioHandle, loopFlag, volume);
+		}
+	}
+	void StopAudio(int AudioHandle) { StopWave(AudioHandle); }
 
 	/// <summary>
 	/// 音声停止

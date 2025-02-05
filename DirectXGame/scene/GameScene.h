@@ -58,6 +58,13 @@ private: // メンバ変数
 	ViewProjection viewProjection_;
 	WorldTransform worldTransform_;
 
+	// BGM
+	int BGMHandle_ = 0;
+	int BGMAudio_ = -1;
+	// BGMが再生されているかを追跡
+	bool isBGMPlaying_ = false;
+
+
 	// 終了フラグ
 	bool finished_ = false;
 
