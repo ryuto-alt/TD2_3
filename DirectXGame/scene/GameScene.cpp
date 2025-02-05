@@ -2,7 +2,7 @@
 #include "TextureManager.h"
 #include "mymath.h"
 #include <cassert>
-#include <regex> // 正規表現使うため追加
+#include <regex>
 
 GameScene::GameScene() {}
 
