@@ -35,8 +35,6 @@ void Enemy::Update() {
 
 	worldTransform_.TransferMatrix();
 
-	MovePlayer();
-
 	// 衝突情報を初期化
 	CollisionMapInfo1 collisionMapInfo;
 	// 移動量に速度の値をコピー
@@ -100,12 +98,27 @@ void Enemy::SetVelocity(const Vector3& velocity) {
 	worldTransform_.translation_ += velocity_; // 速度を設定した際に即座に位置を更新
 }
 
+void Enemy::SetVelocityLeft(const Vector3& velocity) {
+	velocity_ = velocity;
+	worldTransform_.translation_ = worldTransform_.translation_ - velocity_; // 速度を設定した際に即座に位置を更新
+}
+
 void Enemy::CeilingContact(const CollisionMapInfo1& info) {
 	// 天井、当り判定
 	if (info.hitCeilingFlag) {
 		DebugText::GetInstance()->ConsolePrintf("hit ceiling\n");
 		velocity_.y = 0;
 	}
+}
+
+void Enemy::InitializePosition(const Vector3& position) {
+
+	worldTransform_.Initialize();
+	worldTransform_.translation_ = position;
+	velocity_.x = 0;
+	velocity_.y = 0;
+	
+
 }
 
 void Enemy::GraundSetting(const CollisionMapInfo1& info) {

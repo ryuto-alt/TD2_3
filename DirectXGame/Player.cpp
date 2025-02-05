@@ -131,6 +131,8 @@ AABB Player::GetAABB() {
 	return aabb;
 }
 
+float Player::GetRadius() const { return radius_; }
+
 void Player::OnCollision(Enemy* enemy) {
 	if (!enemy)
 		return; // null チェック
@@ -143,11 +145,11 @@ void Player::OnCollision(Enemy* enemy) {
 	float playerRadius = radius_;           // プレイヤーの半径
 	float enemyRadius = enemy->GetRadius(); // 敵の半径
 
-	// **円同士の衝突判定**                                                                                                                                      // オフセットする量
+	// **円同士の衝突判定**
 	float distanceSquaredLeft = (playerPos.x + offsetX - enemyPos.x) * (playerPos.x + offsetX - enemyPos.x) + (playerPos.y - enemyPos.y) * (playerPos.y - enemyPos.y);  // 左にオフセット
-	float distanceSquaredRight = (playerPos.x - offsetX - enemyPos.x) * (playerPos.x - offsetX - enemyPos.x) + (playerPos.y - enemyPos.y) * (playerPos.y - enemyPos.y); // 右にオフセット
+	float distanceSquaredRight = (playerPos.x - offsetX2 - enemyPos.x) * (playerPos.x - offsetX2 - enemyPos.x) + (playerPos.y - enemyPos.y) * (playerPos.y - enemyPos.y); // 右にオフセット
 	float distanceSquaredUp = (playerPos.x - enemyPos.x) * (playerPos.x - enemyPos.x) + (playerPos.y + offsetX - enemyPos.y) * (playerPos.y + offsetX - enemyPos.y);    // 上にオフセット
-	float distanceSquaredDown = (playerPos.x - enemyPos.x) * (playerPos.x - enemyPos.x) + (playerPos.y - offsetX - enemyPos.y) * (playerPos.y - offsetX - enemyPos.y);  // 下にオフセット
+	float distanceSquaredDown = (playerPos.x - enemyPos.x) * (playerPos.x - enemyPos.x) + (playerPos.y - offsetX2 - enemyPos.y) * (playerPos.y - offsetX2 - enemyPos.y);  // 下にオフセット
 
 	float radiusSum = playerRadius + enemyRadius;
 	float radiusSumSquared = radiusSum * radiusSum;
@@ -162,8 +164,8 @@ void Player::OnCollision(Enemy* enemy) {
 	}
 
 	if (distanceSquaredRight <= radiusSumSquared && !collisionDetected) {
-		Vector3 pushDirection = Vector3(-MapChipField::kBlockWidth / 2, 0, 0); // 右方向に押し出す
-		enemy->SetVelocity(pushDirection);
+		Vector3 pushDirection = Vector3(-MapChipField::kBlockWidth / 2+0.5f, 0, 0); // 右方向に押し出す
+		enemy->SetVelocityLeft(pushDirection);
 		collisionDetected = true;
 	}
 
@@ -174,13 +176,11 @@ void Player::OnCollision(Enemy* enemy) {
 	}
 
 	if (distanceSquaredDown <= radiusSumSquared && !collisionDetected) {
-		Vector3 pushDirection = Vector3(0, MapChipField::kBlockHeight / 2-0.5f, 0); // 下方向に押し出す
-		enemy->SetVelocity(pushDirection);
+		Vector3 pushDirection = Vector3(0, -MapChipField::kBlockHeight / 2+0.5f, 0); // 下方向に押し出す
+		enemy->SetVelocityLeft(pushDirection);
 		collisionDetected = true;
 	}
 }
-
-
 
 
 void Player::SetWorldPosition(const Vector3& position) {

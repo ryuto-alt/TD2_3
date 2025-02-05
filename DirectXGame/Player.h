@@ -64,6 +64,9 @@ public:
 	Vector3 CornerPosition(const Vector3& center, Corner corner);
 	Vector3 GetWorldPosition();
 	AABB GetAABB();
+
+	float GetRadius() const;
+
 	void OnCollision(Enemy* enemy);
 
 	void Stop() {
@@ -118,7 +121,8 @@ private:
 	Vector3 worldPos_;
 	float radius_;
 
-     float offsetX = 2.0f; // Add this line to define offsetX
+    float offsetX = 1.5f; // Add this line to define offsetX
+	float offsetX2 = 2.0f; // Add this line to define offsetX
 
 	 bool snapEnabled_ = true; // デフォルトではスナップ処理を有効にする
 };

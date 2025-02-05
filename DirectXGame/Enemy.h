@@ -32,7 +32,11 @@ public:
 	Vector3& GetVelocity() { return velocity_; }
 	void SetVelocity(const Vector3& velocity);
 
+	void SetVelocityLeft(const Vector3& velocity);
+
 	void CeilingContact(const CollisionMapInfo1& info);
+
+	void InitializePosition(const Vector3& position);
 
 	void GraundSetting(const CollisionMapInfo1& info);
 

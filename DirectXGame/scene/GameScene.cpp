@@ -188,7 +188,7 @@ void GameScene::Update() {
 	if ((distanceToPlayerLeft < triggerDistance) && Input::GetInstance()->TriggerKey(DIK_SPACE)) {
 		Vector3 velocity = playerCenter->GetVelocity();
 		ShotPlayer = true;
-		velocity.x = MapChipField::kBlockWidth / 2-0.5f;
+		velocity.x = MapChipField::kBlockWidth / 2 - 0.5f;
 		playerCenter->SetVelocity(velocity);
 
 		ChangeDelay = 10;
@@ -202,7 +202,7 @@ void GameScene::Update() {
 	if ((distanceToPlayerRight < triggerDistance) && Input::GetInstance()->TriggerKey(DIK_SPACE)) {
 		Vector3 velocity = playerCenter->GetVelocity();
 		ShotPlayer = true;
-		velocity.x = -MapChipField::kBlockWidth / 2;
+		velocity.x = -MapChipField::kBlockWidth / 2 + 0.5f;
 		playerCenter->SetVelocity(velocity);
 
 		ChangeDelay = 10;
@@ -217,7 +217,7 @@ void GameScene::Update() {
 	if ((distanceToPlayerTop < triggerDistance) && Input::GetInstance()->TriggerKey(DIK_SPACE)) {
 		Vector3 velocity = playerCenter->GetVelocity();
 		ShotPlayer = true;
-		velocity.y = -MapChipField::kBlockHeight / 2;
+		velocity.y = -MapChipField::kBlockHeight / 2 + 0.5f;
 		playerCenter->SetVelocity(velocity);
 
 		ChangeDelay = 10;
@@ -231,7 +231,7 @@ void GameScene::Update() {
 	if ((distanceToPlayerBottom < triggerDistance) && Input::GetInstance()->TriggerKey(DIK_SPACE)) {
 		Vector3 velocity = playerCenter->GetVelocity();
 		ShotPlayer = true;
-		velocity.y = MapChipField::kBlockHeight / 2;
+		velocity.y = MapChipField::kBlockHeight / 2 - 0.5f;
 		playerCenter->SetVelocity(velocity);
 
 		ChangeDelay = 10;
@@ -241,6 +241,34 @@ void GameScene::Update() {
 		alignedPos.x = playerBottomPos.x;
 		playerCenter->SetWorldPosition(alignedPos);
 	}
+
+
+	// **プレイヤーと敵の中心座標を取得**
+	Vector3 enemyPos = enemy_->GetWorldPosition();
+
+	// **円同士の衝突判定**
+	float distanceToEnemyBottom = playerBottomPos.Distance(enemyPos);
+	float distanceToEnemyTop = playerTopPos.Distance(enemyPos);
+	float distanceToEnemyLeft = playerLeftPos.Distance(enemyPos);
+	float distanceToEnemyRight = playerRightPos.Distance(enemyPos);
+
+	if (distanceToEnemyBottom <= triggerDistance) {
+		Vector3 enemy_position2 = mapChipField_->GetMapChipPositionByIndex(5, 5);
+		enemy_->InitializePosition(enemy_position2);
+	}
+	if (distanceToEnemyTop <= triggerDistance) {
+		Vector3 enemy_position3 = mapChipField_->GetMapChipPositionByIndex(5, 5);
+		enemy_->InitializePosition(enemy_position3);
+	}
+	if (distanceToEnemyLeft <= triggerDistance) {
+		Vector3 enemy_position4 = mapChipField_->GetMapChipPositionByIndex(5, 5);
+		enemy_->InitializePosition(enemy_position4);
+	}
+	if (distanceToEnemyRight <= triggerDistance) {
+		Vector3 enemy_position5 = mapChipField_->GetMapChipPositionByIndex(5, 5);
+		enemy_->InitializePosition(enemy_position5);
+	}
+
 
 	// ゲーム終了フラグ (DIK_2)
 	if (Input::GetInstance()->PushKey(DIK_2)) {
@@ -267,7 +295,6 @@ void GameScene::Update() {
 	ImGui::Begin("Scene");
 	ImGui::End();
 }
-
 
 void GameScene::Draw() {
 
