@@ -1,4 +1,5 @@
 #pragma once
+#include "Enemy.h"
 #include "AABB.h"
 #include "Input.h"
 #include "MathUtilityForText.h"
@@ -63,7 +64,7 @@ public:
 	Vector3 CornerPosition(const Vector3& center, Corner corner);
 	Vector3 GetWorldPosition();
 	AABB GetAABB();
-	void OnCollision(const Enemy* enemy);
+	void OnCollision(Enemy* enemy);
 
 	void Stop() {
 		velocity_ = {0, 0, 0};
@@ -116,6 +117,8 @@ private:
 
 	Vector3 worldPos_;
 	float radius_;
+
+     float offsetX = 2.0f; // Add this line to define offsetX
 
 	 bool snapEnabled_ = true; // デフォルトではスナップ処理を有効にする
 };

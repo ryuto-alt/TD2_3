@@ -74,6 +74,7 @@ void Enemy::MovePlayer() {
 	}
 }
 
+
 void Enemy::UpdateCenter() {
 	worldTransform_.TransferMatrix();
 
@@ -328,6 +329,9 @@ AABB Enemy::GetAABB() {
 
 	return aabb;
 }
+
+float Enemy::GetRadius() const { return radius_; }
+
 
 void Enemy::SetWorldPosition(const Vector3& position) {
 	worldTransform_.translation_ = position;

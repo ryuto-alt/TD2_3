@@ -10,6 +10,13 @@ struct Vector3 final {
 
 	Vector3 operator*(float scalar) const { return {x * scalar, y * scalar, z * scalar}; }
 
+	Vector3& operator*=(float scalar) {
+		x *= scalar;
+		y *= scalar;
+		z *= scalar;
+		return *this;
+	}
+
 	void Normalize() {
 		float length = std::sqrt(x * x + y * y + z * z);
 		if (length != 0) {

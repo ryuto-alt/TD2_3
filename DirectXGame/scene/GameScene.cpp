@@ -100,6 +100,8 @@ void GameScene::Update() {
 		playerRight->Update2();
 	}
 
+	enemy_->Update();
+
 	// 各プレイヤーのワールド座標を取得
 	Vector3 playerBottomPos = playerBottom->GetWorldPosition();
 	Vector3 playerTopPos = playerTop->GetWorldPosition();
@@ -114,8 +116,6 @@ void GameScene::Update() {
 	float distanceToPlayerRight = playerCenterPos.Distance(playerRightPos);
 	float distanceToPlayerTop = playerCenterPos.Distance(playerTopPos);
 	float distanceToPlayerBottom = playerCenterPos.Distance(playerBottomPos);
-
-	//float distanceToEnemy = playerCenterPos.Distance(enemy_position);
 
 	// 発射をトリガーする距離
 	const float triggerDistance = 4.3f;
@@ -152,13 +152,14 @@ void GameScene::Update() {
 	if (followHorizontal) {
 
 		playerCenter->UpdateCenter2();
-		enemy_->UpdateCenter();
 	}
 
 	if (!followHorizontal) {
 
 		playerCenter->UpdateCenter();
 	}
+
+	playerCenter->OnCollision(enemy_);
 
 	ChangeDelay--;
 
@@ -186,12 +187,9 @@ void GameScene::Update() {
 	// **横方向の発射処理**
 	if ((distanceToPlayerLeft < triggerDistance) && Input::GetInstance()->TriggerKey(DIK_SPACE)) {
 		Vector3 velocity = playerCenter->GetVelocity();
-		Vector3 enemyVelocity = enemy_->GetVelocity();
 		ShotPlayer = true;
-		velocity.x = MapChipField::kBlockWidth / 2;
-		enemyVelocity.x = MapChipField::kBlockWidth / 2;
+		velocity.x = MapChipField::kBlockWidth / 2-0.5f;
 		playerCenter->SetVelocity(velocity);
-		enemy_->SetVelocity(enemyVelocity);
 
 		ChangeDelay = 10;
 

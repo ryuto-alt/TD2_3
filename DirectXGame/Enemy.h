@@ -47,6 +47,8 @@ public:
 	Vector3 GetWorldPosition();
 	AABB GetAABB();
 
+	float GetRadius() const;
+
 	void SetWorldPosition(const Vector3& position);
 
 	LRDirection1 GetDirection() const { return lrdDirection_; }

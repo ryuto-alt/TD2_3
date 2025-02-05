@@ -103,8 +103,6 @@ private: // メンバ変数
 	Model* modelSkydome_ = nullptr;
 	// std::vector<std::vector<WorldTransform*>> worldTransformBlocks_;
 	float ChangeDelay = 10.0f;
+
+	//float triggerDistance = 1.0f; // 適切な値に設定
 };
-
-
-
-
