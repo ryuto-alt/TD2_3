@@ -113,5 +113,7 @@ private: // メンバ変数
 	bool hitLeft = false;
 	bool hitRight = false;
 
+	float Scene = 0;
+
 	//float triggerDistance = 1.0f; // 適切な値に設定
 };

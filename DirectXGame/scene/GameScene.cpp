@@ -273,11 +273,21 @@ void GameScene::Update() {
 		enemy_->InitializePosition(enemy_position5);
 	}
 
+	// すべてのフラグがtrueの場合にシーンを変更
+	if (hitBottom && hitTop && hitLeft && hitRight) {
+		//clearシーン
+	}
 
 	// ゲーム終了フラグ (DIK_2)
-	if (Input::GetInstance()->PushKey(DIK_2)) {
-		finished_ = true;
+	if (Scene > 6) {
+		//ゲームオーバーシーン
 	}
+
+		// ゲーム終了フラグ (DIK_2)
+	if (Input::GetInstance()->PushKey(DIK_2)) {
+		//リセットボタン
+	}
+
 
 #pragma region ブロック描画
 	// 縦横ブロック更新
