@@ -254,21 +254,25 @@ void GameScene::Update() {
 
 	if (distanceToEnemyBottom <= triggerDistance) {
 		hitBottom = true;
+		Scene += 1;
 		Vector3 enemy_position2 = mapChipField_->GetMapChipPositionByIndex(8, 5);
 		enemy_->InitializePosition(enemy_position2);
 	}
 	if (distanceToEnemyTop <= triggerDistance) {
 		hitTop = true;
+		Scene += 1;
 		Vector3 enemy_position3 = mapChipField_->GetMapChipPositionByIndex(11, 2);
 		enemy_->InitializePosition(enemy_position3);
 	}
 	if (distanceToEnemyLeft <= triggerDistance) {
 		hitLeft = true;
+		Scene += 1;
 		Vector3 enemy_position4 = mapChipField_->GetMapChipPositionByIndex(7, 6);
 		enemy_->InitializePosition(enemy_position4);
 	}
 	if (distanceToEnemyRight <= triggerDistance) {
 		hitRight = true;
+		Scene += 1;
 		Vector3 enemy_position5 = mapChipField_->GetMapChipPositionByIndex(8, 9);
 		enemy_->InitializePosition(enemy_position5);
 	}
